@@ -1,0 +1,132 @@
+# Include your custom HAL commands here
+# This file will not be overwritten when you run PNCconf again
+#
+
+# alias hardware pin names to descriptive names
+
+# router hardware
+# optimat_output is an output from LinuxCNC / MESA to the router
+
+alias pin hm2_5i25.0.7i66.0.2.output-15 optimat_o_laser_crosshair
+alias pin hm2_5i25.0.7i76.0.3.output-03 optimat_o_forced_lubrication_air
+alias pin hm2_5i25.0.7i76.0.3.output-02 optimat_o_forced_lubrication_on
+alias pin hm2_5i25.0.7i76.0.3.output-00 optimat_o_groove_saw_down
+alias pin hm2_5i25.0.7i77.0.0.output-10 optimat_o_horizontal_x_spindle_1_down
+alias pin hm2_5i25.0.7i77.0.0.output-11 optimat_o_horizontal_x_spindle_2_down
+alias pin hm2_5i25.0.7i77.0.0.output-09 optimat_o_horizontal_y_spindle_1_down
+alias pin hm2_5i25.0.7i66.0.2.output-12 optimat_o_keb_parameter_set_1
+alias pin hm2_5i25.0.7i66.0.2.output-13 optimat_o_keb_parameter_set_2
+alias pin hm2_5i25.0.7i66.0.2.output-14 optimat_o_keb_parameter_set_4
+alias pin hm2_5i25.0.7i66.0.2.output-10 optimat_o_keb_rotation_forward
+alias pin hm2_5i25.0.7i66.0.2.output-11 optimat_o_keb_rotation_reverse
+alias pin hm2_5i25.0.7i77.0.0.output-08 optimat_o_motor_drilling_unit
+alias pin hm2_5i25.0.7i66.0.2.output-08 optimat_o_motor_router_1
+alias pin hm2_5i25.0.7i66.0.2.output-09 optimat_o_motor_router_2
+alias pin hm2_5i25.0.7i77.0.0.output-00 optimat_o_optimat_watchdog
+alias pin hm2_5i25.0.7i66.0.2.output-07 optimat_o_router_1_clamping
+alias pin hm2_5i25.0.7i66.0.2.output-16 optimat_o_router_1_down
+alias pin hm2_5i25.0.7i66.0.2.output-17 optimat_o_router_2_down
+alias pin hm2_5i25.0.7i76.0.3.output-04 optimat_o_spindle_1
+alias pin hm2_5i25.0.7i66.0.2.output-01 optimat_o_spindle_10
+alias pin hm2_5i25.0.7i66.0.2.output-02 optimat_o_spindle_11
+alias pin hm2_5i25.0.7i76.0.3.output-05 optimat_o_spindle_2
+alias pin hm2_5i25.0.7i76.0.3.output-06 optimat_o_spindle_3
+alias pin hm2_5i25.0.7i76.0.3.output-07 optimat_o_spindle_4
+alias pin hm2_5i25.0.7i76.0.3.output-08 optimat_o_spindle_5
+alias pin hm2_5i25.0.7i76.0.3.output-09 optimat_o_spindle_6
+alias pin hm2_5i25.0.7i76.0.3.output-10 optimat_o_spindle_7
+alias pin hm2_5i25.0.7i76.0.3.output-11 optimat_o_spindle_8
+alias pin hm2_5i25.0.7i66.0.2.output-00 optimat_o_spindle_9
+alias pin hm2_5i25.0.7i77.0.0.output-07 optimat_o_stopper_left
+alias pin hm2_5i25.0.7i77.0.0.output-06 optimat_o_stopper_right
+alias pin hm2_5i25.0.7i66.0.2.output-05 optimat_o_tensioning_cylinder_left_jam
+alias pin hm2_5i25.0.7i66.0.2.output-06 optimat_o_tensioning_cylinder_left_release
+alias pin hm2_5i25.0.7i66.0.2.output-03 optimat_o_tensioning_cylinder_right_jam
+alias pin hm2_5i25.0.7i66.0.2.output-04 optimat_o_tensioning_cylinder_right_release
+alias pin hm2_5i25.0.7i66.0.2.output-23 optimat_o_tool_magazine_basic_position
+alias pin hm2_5i25.0.7i66.0.2.output-22 optimat_o_tool_magazine_changing_position
+alias pin hm2_5i25.0.7i66.0.2.output-20 optimat_o_tool_magazine_down
+alias pin hm2_5i25.0.7i66.0.2.output-19 optimat_o_tool_magazine_turn_left
+alias pin hm2_5i25.0.7i66.0.2.output-18 optimat_o_tool_magazine_turn_right
+alias pin hm2_5i25.0.7i66.0.2.output-21 optimat_o_tool_magazine_up
+alias pin hm2_5i25.0.7i76.0.3.output-01 optimat_o_units_up
+alias pin hm2_5i25.0.7i77.0.0.output-04 optimat_o_vaccum_right
+alias pin hm2_5i25.0.7i77.0.0.output-01 optimat_o_vacuum_left
+
+
+# optimat_input  is an input to LinuxCNC / MESA from the router
+alias pin hm2_5i25.0.7i77.0.0.input-05 optimat_i_coolant_flow
+alias pin hm2_5i25.0.7i77.0.0.input-06 optimat_i_coolant_thermal_overload
+# alias pin hm2_5i25.0.7i77.0.0.input-26-not optimat_i_x_axis_home
+# alias pin hm2_5i25.0.7i77.0.0.input-27-not optimat_i_y_axis_home
+# alias pin hm2_5i25.0.7i77.0.0.input-28-not optimat_i_z_axis_home
+
+# hmi_output is an output from LinuxCNC / MESA to the HMI / pendant
+alias pin hm2_5i25.0.7i66.0.4.output-02 hmi_o_panel_cycle_start_led
+alias pin hm2_5i25.0.7i66.0.4.output-01 hmi_o_panel_feed_hold_led
+alias pin hm2_5i25.0.7i66.0.4.output-00 hmi_o_pendant_led
+alias pin hm2_5i25.0.7i66.0.4.output-05 hmi_o_stacklight_green
+alias pin hm2_5i25.0.7i66.0.4.output-04 hmi_o_stacklight_orange
+alias pin hm2_5i25.0.7i66.0.4.output-03 hmi_o_stacklight_red
+
+# hmi_input is an input to LinuxCNC / MESA from the HMI / pendant
+alias pin hm2_5i25.0.7i66.0.4.input-07 hmi_i_panel_feed_hold_button
+alias pin hm2_5i25.0.7i66.0.4.input-08 hmi_i_panel_cycle_start_button
+alias pin hm2_5i25.0.7i66.0.4.input-09 hmi_i_panel_fro_a
+alias pin hm2_5i25.0.7i66.0.4.input-10 hmi_i_panel_fro_b
+alias pin hm2_5i25.0.7i66.0.4.input-11 hmi_i_panel_fro_e
+alias pin hm2_5i25.0.7i66.0.4.input-12 hmi_i_panel_fro_f
+
+alias pin hm2_5i25.0.7i66.0.4.input-00 hmi_i_pendant_jog_x1
+alias pin hm2_5i25.0.7i66.0.4.input-01 hmi_i_pendant_jog_x10
+alias pin hm2_5i25.0.7i66.0.4.input-02 hmi_i_pendant_jog_x100
+alias pin hm2_5i25.0.7i66.0.4.input-03 hmi_i_pendant_jog_axis_x
+alias pin hm2_5i25.0.7i66.0.4.input-04 hmi_i_pendant_jog_axis_y
+alias pin hm2_5i25.0.7i66.0.4.input-05 hmi_i_pendant_jog_axis_z
+alias pin hm2_5i25.0.7i66.0.4.input-06 hmi_i_pendant_jog_axis_4
+
+
+
+# net connect our stuff
+net coolant-flood  =>  optimat_o_laser_crosshair
+
+net machine-is-enabled  => hmi_o_stacklight_orange
+net home_x              => hmi_o_stacklight_red
+net home_z              => hmi_o_stacklight_green
+
+
+# feed rate override (calculation done elsewhere, apparently 
+net fo-incr-a     <=  hmi_i_panel_fro_a 
+net fo-incr-b     <=  hmi_i_panel_fro_b 
+net fo-incr-c     <=  hmi_i_panel_fro_e 
+net fo-incr-d     <=  hmi_i_panel_fro_f 
+
+# --- CYCLE-START ---
+net cycle-start     <=  hmi_i_panel_cycle_start_button
+
+# --- JOINT-SELECT ---
+net joint-select-a     <=  hmi_i_pendant_jog_axis_x
+net joint-select-b     <=  hmi_i_pendant_jog_axis_y
+net joint-select-c     <=  hmi_i_pendant_jog_axis_z
+net joint-select-d     <=  hmi_i_pendant_jog_axis_4
+
+# examples
+# --- FORCE-PIN-TRUE ---
+#setp hm2_5i25.0.7i77.0.0.output-00 true
+# external input signals
+# --- ESTOP-EXT ---
+#net estop-ext     <=  hm2_5i25.0.7i77.0.0.input-00
+# --- SPINDLE-AT-SPEED ---
+#net spindle-at-speed     <=  hm2_5i25.0.7i77.0.0.input-25
+
+# --- HOME-X ---
+# net home-x     <=  hm2_5i25.0.7i77.0.0.input-26
+
+# --- HOME-Y ---
+# net home-y     <=  hm2_5i25.0.7i77.0.0.input-27
+
+# --- HOME-Z ---
+# net home-z     <=  hm2_5i25.0.7i77.0.0.input-28
+
+
+
