@@ -234,3 +234,41 @@ net spindle-ccw spindle.0.reverse => optimat_o_keb_rotation_reverse
 
 
 
+# should actually be dir=2 for unidirectional
+loadrt carousel pockets=6 encoding=binary num_sense=3 dir=1
+
+# net carousel-bit-1 optimat_i_tool_magazine_counter_pulse => carousel.0.sense-0
+net carousel-bit-2 optimat_i_tool_magazine_position_bit_1 => carousel.0.sense-0
+net carousel-bit-4 optimat_i_tool_magazine_position_bit_2 => carousel.0.sense-1
+net carousel-bit-8 optimat_i_tool_magazine_position_bit_4 => carousel.0.sense-2
+
+net carousel-motor-fwd  optimat_o_tool_magazine_turn_right => carousel.0.motor-fwd
+net carousel-motor-rev  optimat_o_tool_magazine_turn_left => carousel.0.motor-rev
+
+# make it go!
+addf carousel.0 servo-thread
+
+# carousel.N.pocket-number s32 in
+# The pocket to move to when the .enable pin goes high
+
+# carousel.N.enable bit in
+# Set this pin high to start movement. Setting it low will stop movement
+
+# carousel.N.sense-M bit in (M=0..personality)
+# Carousel position feedback pins. In ’index’ mode there will be only 2 pins. sense-0 is the index and sense-1 is the pocket sensor.
+
+# carousel.N.active bit out
+# indicates that the component is active
+
+# carousel.N.ready bit out
+# This pin goes high when the carousel is in-position
+
+# carousel.N.motor-fwd bit out
+# Indicates the motor should run forwards (bigger numbers)
+
+# carousel.N.motor-rev bit out
+# Indicates the motor should run reverse.
+
+# carousel.N.current-position s32 out   
+# This pin indicates the current position feedback
+
