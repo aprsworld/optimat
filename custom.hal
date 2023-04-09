@@ -52,7 +52,7 @@ alias pin hm2_5i25.0.7i66.0.2.output-13 optimat_o_keb_parameter_set_2
 alias pin hm2_5i25.0.7i66.0.2.output-14 optimat_o_keb_parameter_set_4
 alias pin hm2_5i25.0.7i66.0.2.output-15 optimat_o_laser_crosshair
 alias pin hm2_5i25.0.7i66.0.2.output-16 optimat_o_router_1_down
-alias pin hm2_5i25.0.7i66.0.2.output-17 optimat_o_router_2_down
+# alias pin hm2_5i25.0.7i66.0.2.output-17 optimat_o_ # available output
 alias pin hm2_5i25.0.7i66.0.2.output-18 optimat_o_tool_magazine_turn_right
 alias pin hm2_5i25.0.7i66.0.2.output-19 optimat_o_tool_magazine_turn_left
 alias pin hm2_5i25.0.7i66.0.2.output-20 optimat_o_tool_magazine_down
@@ -164,16 +164,31 @@ net router_1_down <= optimat_i_router_1_on_bottom
 net vacuum_up <= optimat_i_vacuum
 
 # net connect our stuff
-net coolant-flood  =>  optimat_o_laser_crosshair
+# net coolant-flood  =>  optimat_o_laser_crosshair
 
-net tool-release => optimat_o_router_1_clamping
-net tool-release <= optimat_i_tool_change_button
+# IO for M6x codes
+net tool-change-mag-on-bottom   optimat_i_tool_magazine_on_bottom         => motion.digital-in-00 
+net tool-change-mag-on-top      optimat_i_tool_magazine_on_top            => motion.digital-in-01 
+net tool-change-mag-on-changing optimat_i_tool_magazine_changing_position => motion.digital-in-02 
+net tool-change-mag-on-basic    optimat_i_tool_magazine_basic_position    => motion.digital-in-03 
 
-net stoppers-right =>  optimat_o_stopper_right
-net stoppers-right <= optimat_i_foot_switch_right
+net tool-change-mag-down        optimat_o_tool_magazine_down              => motion.digital-out-00
+net tool-change-mag-up          optimat_o_tool_magazine_up                => motion.digital-out-01
+net tool-change-mag-changing    optimat_o_tool_magazine_changing_position => motion.digital-out-02
+net tool-change-mag-basic       optimat_o_tool_magazine_basic_position    => motion.digital-out-03
+net tool-change-release         optimat_o_router_1_clamping               => motion.digital-out-04
 
-net stoppers-left =>  optimat_o_stopper_left
-net stoppers-left <= optimat_i_foot_switch_left
+# net laser-crosshair optimat_o_laser_crosshair => motion.digital-out-01
+
+
+# net tool-release => optimat_o_router_1_clamping
+# net tool-release <= optimat_i_tool_change_button
+
+# net stoppers-right =>  optimat_o_stopper_right
+# net stoppers-right <= optimat_i_foot_switch_right
+
+# net stoppers-left =>  optimat_o_stopper_left
+# net stoppers-left <= optimat_i_foot_switch_left
 
 # stacklight on HMI
 # net machine-is-enabled        => hmi_o_stacklight_orange
@@ -234,41 +249,28 @@ net spindle-ccw spindle.0.reverse => optimat_o_keb_rotation_reverse
 
 
 
-# should actually be dir=2 for unidirectional
-loadrt carousel pockets=6 encoding=binary num_sense=3 dir=1
+# tool changer carousel
+loadrt carousel pockets=6 encoding=binary num_sense=3 dir=2
 
-# net carousel-bit-1 optimat_i_tool_magazine_counter_pulse => carousel.0.sense-0
+net carousel-strobe optimat_i_tool_magazine_counter_pulse => carousel.0.strobe
 net carousel-bit-2 optimat_i_tool_magazine_position_bit_1 => carousel.0.sense-0
 net carousel-bit-4 optimat_i_tool_magazine_position_bit_2 => carousel.0.sense-1
 net carousel-bit-8 optimat_i_tool_magazine_position_bit_4 => carousel.0.sense-2
 
-net carousel-motor-fwd  optimat_o_tool_magazine_turn_right => carousel.0.motor-fwd
-net carousel-motor-rev  optimat_o_tool_magazine_turn_left => carousel.0.motor-rev
+net carousel-motor-fwd  optimat_o_tool_magazine_turn_left => carousel.0.motor-fwd
+net carousel-motor-rev  optimat_o_tool_magazine_turn_right => carousel.0.motor-rev
 
 # make it go!
 addf carousel.0 servo-thread
 
-# carousel.N.pocket-number s32 in
-# The pocket to move to when the .enable pin goes high
+# toggles for stoppers
+loadrt toggle count=2
 
-# carousel.N.enable bit in
-# Set this pin high to start movement. Setting it low will stop movement
+net toggle-stoppers-left-pedal optimat_i_foot_switch_left => toggle.0.in
+net toggle-stoppers-left toggle.0.out => optimat_o_stopper_left
 
-# carousel.N.sense-M bit in (M=0..personality)
-# Carousel position feedback pins. In ’index’ mode there will be only 2 pins. sense-0 is the index and sense-1 is the pocket sensor.
+net toggle-stoppers-right-pedal optimat_i_foot_switch_right => toggle.1.in
+net toggle-stoppers-right toggle.1.out => optimat_o_stopper_right
 
-# carousel.N.active bit out
-# indicates that the component is active
-
-# carousel.N.ready bit out
-# This pin goes high when the carousel is in-position
-
-# carousel.N.motor-fwd bit out
-# Indicates the motor should run forwards (bigger numbers)
-
-# carousel.N.motor-rev bit out
-# Indicates the motor should run reverse.
-
-# carousel.N.current-position s32 out   
-# This pin indicates the current position feedback
-
+addf toggle.0 servo-thread
+addf toggle.1 servo-thread
