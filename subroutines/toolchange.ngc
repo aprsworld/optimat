@@ -1,12 +1,135 @@
 o<toolchange> sub
 
+; we need to do these nets to LinuxCNC knows we are done, I guess
+; net tool-prep-loop iocontrol.0.tool-prepare iocontrol.0.tool-prepared
+; net tool-change-loop iocontrol.0.tool-change iocontrol.0.tool-changed
 
 ; stub turn laser on 
-
 M64 P15
 
+; from page 5.5.4 of manual
+; [FROM MANUAL] main spindle is set pneumatically into the lower position
 
-o<toolchange> endsub [1]
+; units up off
+M65 P6
+; router down
+M64 P5
+
+; verify router is down, waiting for 5 seconds
+M66 P4 L3 Q5
 
 
+; position router to tool change Z
+G53 G0 Z-1.2345
+
+; dwell 2.2 seconds
+G4 P2.2
+
+; stub turn laser off
+M65 P15
+
+; router up
+G53 G0 Z0
+M65 P5
+M64 P6
+
+; verify router is up, waiting for 5 seconds
+M66 P5 L3 Q5
+
+
+
+; [FROM MANUAL] afterwards the z-axis moves to the change position
+
+; [FROM MANUAL] the changer case moves to the preparing position
+; [FROM MANUAL] doing this, the empty tool holding grip snap into the ring groove
+; [FROM MANUAL] of the HSK holder which is the main spindle
+
+; [FROM MANUAL] tool is released in the spindle
+
+; [FROM MANUAL] the magazine plate will be pneumatically lowered onto the changing 
+; [FROM MANUAL] position and draw the tool out of the cone
+
+; [FROM MANUAL] the magazine plate turns the tool which has to be inserted
+; [FROM MANUAL] under the main spindle
+
+; [FROM MANUAL] the magazine plate will be removed into the initial position and insert
+; [FROM MANUAL] the new tool into the spindle
+
+; [FROM MANUAL] the pneumatic cylinder of the changer case removes into the initial position
+
+; [FROM MANUAL] done
+
+
+; only unload the tool if there is a tool in the spindle
+; This assumes that the carousel is already aligned correctly. 
+; It is important to unload the tool before shutting down the machine. 
+
+; O100 IF [#<tool_in_spindle> GT 0]
+;    G53 G0 Z -100
+    
+;    M64 P2 ; move arm in
+;    M66 P2 L3 Q5 ; wait for arm-in = true
+;    O104 if [#5399 LT 0]
+;        (abort, failed to move arm in)
+;    O104 endif
+
+;    M64 P3 ; release tool
+;    M66 P3 L3 Q2 ; wait for tool-released = true
+;    O105 if [#5399 LT 0]
+;        (abort, failed to release tool)
+;    O105 endif
+
+; O100 ENDIF
+
+;    G53 G0 Z0
+
+; O200 IF [#<selected_tool> GT 0]
+
+;    M65 P1 ; unlock carousel
+;    M66 P1 L4 Q1 ; wait for locked=false
+;    O106 if [#5399 LT 0]
+;        (abort, failed to unlock carousel)
+;    O106 endif
+
+;    M68 E0 Q#<selected_pocket> ;set the carousel to move to the right pocket
+
+;    M64 P0 ; start carousel
+;    G4 P2
+;    M66 P0 L3 Q60 ; wait for carousel finished
+;    O107 if [#5399 LT 0]
+;        (abort, failed to align carousel)
+;    O107 endif
+;    M65 P0; stop carousel
+;    M64 P1 ; lock carousel
+;    M66 P1 L3 Q1 ; wait for locked=true
+;    O108 if [#5399 LT 0]
+;        (abort, failed to lock carousel)
+;    O108 endif
+;
+;    M64 P2 ; move arm in (might already be in)
+;    M66 P2 L3 Q5 ; wait for arm-in = true
+;    O109 if [#5399 LT 0]
+;        (abort, failed to move arm in)
+;    O109 endif
+
+;   G53 G0 Z-100 ; pick up the tool
+
+; O200 ENDIF 
+
+; M65 P3 ; clamp tool
+; M66 P3 L4 Q2 ; wait for tool-released = false
+; O110 if [#5399 LT 0]
+;     (abort, failed to clamp tool)
+; O110 endif
+
+; M65 P2 ; move arm back out
+; M66 P4 L3 Q5 ; wait for arm-out = true
+; O111 if [#5399 LT 0]
+;    (abort, failed to move arm in)
+; O111 endif
+
+
+
+; o<toolchange> endsub [1]
+o<toolchange> endsub [2.0]
 M2
