@@ -162,28 +162,6 @@ alias pin hm2_5i25.0.7i66.0.4.input-12 hmi_i_panel_fro_f
 # net connect our stuff
 # net coolant-flood  =>  optimat_o_laser_crosshair
 
-# IO for M6x codes
-net tool-change-router-clamp-closed optimat_i_router_1_tool_clamp_closed      => motion.digital-in-00
-net tool-change-router-clamp-open   optimat_i_router_1_tool_clamp_open        => motion.digital-in-01
-net tool-change-router-without-tool optimat_i_router_1_without_tool           => motion.digital-in-02
-net tool-change-router-standstill   optimat_i_router_1_standstill             => motion.digital-in-03
-net tool-change-router-on-bottom    optimat_i_router_1_on_bottom              => motion.digital-in-04
-net tool-change-router-on-top       optimat_i_router_1_on_top                 => motion.digital-in-05
-net tool-change-mag-on-bottom       optimat_i_tool_magazine_on_bottom         => motion.digital-in-06 
-net tool-change-mag-on-top          optimat_i_tool_magazine_on_top            => motion.digital-in-07 
-net tool-change-mag-on-changing     optimat_i_tool_magazine_changing_position => motion.digital-in-08 
-net tool-change-mag-on-basic        optimat_i_tool_magazine_basic_position    => motion.digital-in-09 
-
-
-net tool-change-mag-down            optimat_o_tool_magazine_down              => motion.digital-out-00
-net tool-change-mag-up              optimat_o_tool_magazine_up                => motion.digital-out-01
-net tool-change-mag-changing        optimat_o_tool_magazine_changing_position => motion.digital-out-02
-net tool-change-mag-basic           optimat_o_tool_magazine_basic_position    => motion.digital-out-03
-net tool-change-release             optimat_o_router_1_clamping               => motion.digital-out-04
-net tool-change-router-down         optimat_o_router_1_down                   => motion.digital-out-05
-net tool-change-units-up            optimat_o_units_up                        => motion.digital-out-06
-
-net laser-crosshair                 optimat_o_laser_crosshair                 => motion.digital-out-15
 
 # for GladeVCP
 net air_up <= optimat_i_compressed_air
@@ -258,14 +236,55 @@ net spindle-ccw spindle.0.reverse => optimat_o_keb_rotation_reverse
 loadrt carousel pockets=6 encoding=binary num_sense=3 dir=2
 
 net carousel-strobe optimat_i_tool_magazine_counter_pulse => carousel.0.strobe
-net carousel-bit-2 optimat_i_tool_magazine_position_bit_1 => carousel.0.sense-0
-net carousel-bit-4 optimat_i_tool_magazine_position_bit_2 => carousel.0.sense-1
-net carousel-bit-8 optimat_i_tool_magazine_position_bit_4 => carousel.0.sense-2
+net carousel-bit-1 optimat_i_tool_magazine_position_bit_1 => carousel.0.sense-0
+net carousel-bit-2 optimat_i_tool_magazine_position_bit_2 => carousel.0.sense-1
+net carousel-bit-4 optimat_i_tool_magazine_position_bit_4 => carousel.0.sense-2
 
 net carousel-motor-fwd  optimat_o_tool_magazine_turn_left => carousel.0.motor-fwd
 net carousel-motor-rev  optimat_o_tool_magazine_turn_right => carousel.0.motor-rev
 
 addf carousel.0 servo-thread
+
+# float to s32 to get analog M6x code converted to s32 for carousel
+# loadrt conv-float-s32 n=1
+loadrt conv_float_s32 
+addf conv-float-s32.0 servo-thread 
+net carousel-pos-req motion.analog-out-00 conv-float-s32.0.in
+net carousel-pos-s32 conv-float-s32.0.out carousel.0.pocket-number
+
+# make tool change work
+net tool-prep-loop iocontrol.0.tool-prepare iocontrol.0.tool-prepared
+net tool-change-loop iocontrol.0.tool-change iocontrol.0.tool-changed
+
+
+# IO for M6x codes
+net tool-change-router-clamp-closed optimat_i_router_1_tool_clamp_closed      => motion.digital-in-00
+net tool-change-router-clamp-open   optimat_i_router_1_tool_clamp_open        => motion.digital-in-01
+net tool-change-router-without-tool optimat_i_router_1_without_tool           => motion.digital-in-02
+net tool-change-router-standstill   optimat_i_router_1_standstill             => motion.digital-in-03
+net tool-change-router-on-bottom    optimat_i_router_1_on_bottom              => motion.digital-in-04
+net tool-change-router-on-top       optimat_i_router_1_on_top                 => motion.digital-in-05
+net tool-change-mag-on-bottom       optimat_i_tool_magazine_on_bottom         => motion.digital-in-06 
+net tool-change-mag-on-top          optimat_i_tool_magazine_on_top            => motion.digital-in-07 
+net tool-change-mag-on-changing     optimat_i_tool_magazine_changing_position => motion.digital-in-08 
+net tool-change-mag-on-basic        optimat_i_tool_magazine_basic_position    => motion.digital-in-09 
+# net tool-change-mag-on-basic        optimat_i_tool_magazine_basic_position    => motion.digital-in-09 
+
+net tool-change-carousel-ready      carousel.0.ready                          => motion.digital-in-20
+
+
+net tool-change-mag-down            optimat_o_tool_magazine_down              => motion.digital-out-00
+net tool-change-mag-up              optimat_o_tool_magazine_up                => motion.digital-out-01
+net tool-change-mag-changing        optimat_o_tool_magazine_changing_position => motion.digital-out-02
+net tool-change-mag-basic           optimat_o_tool_magazine_basic_position    => motion.digital-out-03
+net tool-change-release             optimat_o_router_1_clamping               => motion.digital-out-04
+net tool-change-router-down         optimat_o_router_1_down                   => motion.digital-out-05
+net tool-change-units-up            optimat_o_units_up                        => motion.digital-out-06
+
+net laser-crosshair                 optimat_o_laser_crosshair                 => motion.digital-out-15
+
+net tool-change-carousel-enable     carousel.0.enable                         => motion.digital-out-20
+
 
 
 # toggles for stoppers

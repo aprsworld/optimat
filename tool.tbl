@@ -1,7 +1,7 @@
-T3 P0 ;tool three 
-T0 P1 ;tool zero 
-T1 P2 ;tool one 
-T100 P3 X-5.000000 Y-3.000000 ;laser crosshair 
-T4 P4 ;tool four 
-T5 P5 ;tool five 
-T2 P100 ;tool two 
+T4 P0 ;tool four 
+T2 P1 ;tool two 
+T0 P2 ;tool zero 
+T1 P4 ;tool one 
+T3 P5 ;tool three 
+T6 P6 ;tool six 
+T5 P100 ;tool five 

@@ -4,7 +4,7 @@
 # overwritten when you run PNCconf again
 
 loadrt [KINS]KINEMATICS
-loadrt [EMCMOT]EMCMOT servo_period_nsec=[EMCMOT]SERVO_PERIOD num_joints=[KINS]JOINTS num_dio=16
+loadrt [EMCMOT]EMCMOT servo_period_nsec=[EMCMOT]SERVO_PERIOD num_joints=[KINS]JOINTS num_dio=32
 loadrt hostmot2
 loadrt hm2_pci config="num_encoders=6 num_pwmgens=0 num_stepgens=0 sserial_port_0=00000x" 
 setp    hm2_5i25.0.watchdog.timeout_ns 5000000

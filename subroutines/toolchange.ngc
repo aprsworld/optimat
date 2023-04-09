@@ -10,31 +10,67 @@ M64 P15
 ; from page 5.5.4 of manual
 ; [FROM MANUAL] main spindle is set pneumatically into the lower position
 
+
+; prepare carousel 
+
+; bring plate down
+M68 E3 Q10.0 ; debug
+
+M65 P1 ; turn off magazine up
+M64 P0 ; turn on magazine down
+; wait until tool magazine on bottom is high or 2 seconds
+M66 P6 L3 Q2
+
+
+M68 E3 Q11.0 ; debug
+
+; tell the carousel module go to position for tool currently in spindle
+M68 E0 Q#<tool_in_spindle>
+; turn on enable to make it go
+M64 P20
+; wait until ready or 4 seconds
+M66 P20 L3 Q4
+; turn off enable
+M65 P20
+
+M68 E3 Q12.0 ; debug
+
+; bring plate up
+M65 P0 ; turn off magazine down
+M64 P1 ; turn on magazine up
+; wait until tool magazine on top is high or 2 seconds
+M66 P7 L3 Q2
+
+
+M68 E3 Q13.0 ; debug
+
+
+
 ; units up off
-M65 P6
+;M65 P6
 ; router down
-M64 P5
+;M64 P5
 
 ; verify router is down, waiting for 5 seconds
-M66 P4 L3 Q5
+;M66 P4 L3 Q5
 
 
 ; position router to tool change Z
-G53 G0 Z-1.2345
+;G53 G0 Z-1.2345
 
 ; dwell 2.2 seconds
-G4 P2.2
+;G4 P2.2
 
 ; stub turn laser off
 M65 P15
 
 ; router up
-G53 G0 Z0
-M65 P5
-M64 P6
+;G53 G0 Z0
+;M65 P5
+;M64 P6
 
 ; verify router is up, waiting for 5 seconds
-M66 P5 L3 Q5
+;M66 P5 L3 Q5
 
 
 
