@@ -1,0 +1,12 @@
+o<toolchange> sub
+
+
+; stub turn laser on 
+
+M64 P15
+
+
+o<toolchange> endsub [1]
+
+
+M2

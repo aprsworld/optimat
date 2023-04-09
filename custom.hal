@@ -158,37 +158,42 @@ alias pin hm2_5i25.0.7i66.0.4.input-12 hmi_i_panel_fro_f
 # alias pin hm2_5i25.0.7i66.0.4.input-15 hmi_i_ # spindle override analog signal
 
 
-# for GladeVCP
-net air_up <= optimat_i_compressed_air
-net router_1_down <= optimat_i_router_1_on_bottom
-net vacuum_up <= optimat_i_vacuum
 
 # net connect our stuff
 # net coolant-flood  =>  optimat_o_laser_crosshair
 
 # IO for M6x codes
-net tool-change-mag-on-bottom   optimat_i_tool_magazine_on_bottom         => motion.digital-in-00 
-net tool-change-mag-on-top      optimat_i_tool_magazine_on_top            => motion.digital-in-01 
-net tool-change-mag-on-changing optimat_i_tool_magazine_changing_position => motion.digital-in-02 
-net tool-change-mag-on-basic    optimat_i_tool_magazine_basic_position    => motion.digital-in-03 
+net tool-change-router-clamp-closed optimat_i_router_1_tool_clamp_closed      => motion.digital-in-00
+net tool-change-router-clamp-open   optimat_i_router_1_tool_clamp_open        => motion.digital-in-01
+net tool-change-router-without-tool optimat_i_router_1_without_tool           => motion.digital-in-02
+net tool-change-router-standstill   optimat_i_router_1_standstill             => motion.digital-in-03
+net tool-change-router-on-bottom    optimat_i_router_1_on_bottom              => motion.digital-in-04
+net tool-change-router-on-top       optimat_i_router_1_on_top                 => motion.digital-in-05
+net tool-change-mag-on-bottom       optimat_i_tool_magazine_on_bottom         => motion.digital-in-06 
+net tool-change-mag-on-top          optimat_i_tool_magazine_on_top            => motion.digital-in-07 
+net tool-change-mag-on-changing     optimat_i_tool_magazine_changing_position => motion.digital-in-08 
+net tool-change-mag-on-basic        optimat_i_tool_magazine_basic_position    => motion.digital-in-09 
 
-net tool-change-mag-down        optimat_o_tool_magazine_down              => motion.digital-out-00
-net tool-change-mag-up          optimat_o_tool_magazine_up                => motion.digital-out-01
-net tool-change-mag-changing    optimat_o_tool_magazine_changing_position => motion.digital-out-02
-net tool-change-mag-basic       optimat_o_tool_magazine_basic_position    => motion.digital-out-03
-net tool-change-release         optimat_o_router_1_clamping               => motion.digital-out-04
 
-# net laser-crosshair optimat_o_laser_crosshair => motion.digital-out-01
+net tool-change-mag-down            optimat_o_tool_magazine_down              => motion.digital-out-00
+net tool-change-mag-up              optimat_o_tool_magazine_up                => motion.digital-out-01
+net tool-change-mag-changing        optimat_o_tool_magazine_changing_position => motion.digital-out-02
+net tool-change-mag-basic           optimat_o_tool_magazine_basic_position    => motion.digital-out-03
+net tool-change-release             optimat_o_router_1_clamping               => motion.digital-out-04
+net tool-change-router-down         optimat_o_router_1_down                   => motion.digital-out-05
+net tool-change-units-up            optimat_o_units_up                        => motion.digital-out-06
+
+net laser-crosshair                 optimat_o_laser_crosshair                 => motion.digital-out-15
+
+# for GladeVCP
+net air_up <= optimat_i_compressed_air
+# net router_1_down <= optimat_i_router_1_on_bottom
+net router_1_down <= optimat_i_motor_cb
+net vacuum_up <= optimat_i_vacuum
 
 
 # net tool-release => optimat_o_router_1_clamping
 # net tool-release <= optimat_i_tool_change_button
-
-# net stoppers-right =>  optimat_o_stopper_right
-# net stoppers-right <= optimat_i_foot_switch_right
-
-# net stoppers-left =>  optimat_o_stopper_left
-# net stoppers-left <= optimat_i_foot_switch_left
 
 # stacklight on HMI
 # net machine-is-enabled        => hmi_o_stacklight_orange
@@ -260,17 +265,16 @@ net carousel-bit-8 optimat_i_tool_magazine_position_bit_4 => carousel.0.sense-2
 net carousel-motor-fwd  optimat_o_tool_magazine_turn_left => carousel.0.motor-fwd
 net carousel-motor-rev  optimat_o_tool_magazine_turn_right => carousel.0.motor-rev
 
-# make it go!
 addf carousel.0 servo-thread
+
 
 # toggles for stoppers
 loadrt toggle count=2
 
 net toggle-stoppers-left-pedal optimat_i_foot_switch_left => toggle.0.in
 net toggle-stoppers-left toggle.0.out => optimat_o_stopper_left
+addf toggle.0 servo-thread
 
 net toggle-stoppers-right-pedal optimat_i_foot_switch_right => toggle.1.in
 net toggle-stoppers-right toggle.1.out => optimat_o_stopper_right
-
-addf toggle.0 servo-thread
 addf toggle.1 servo-thread
