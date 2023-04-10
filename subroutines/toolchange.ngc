@@ -13,24 +13,39 @@ M64 P15
 
 ; prepare carousel 
 
-; bring plate down
-M68 E3 Q10.0 ; debug
+; M68 E3 Q10.0 ; debug
 
+; make sure arm is in basic position
+M65 P2 ; turn off changing position
+M64 P3 ; turn on basic position
+
+; make sure router is down
+M65 P6 ; turn off units up
+M64 P5 ; turn on router down
+; wait until router is on bottom
+M66 P4 L3 Q4
+O102 if [#5399 LT 0]
+	(abort, failed to get router pneumatically down)
+O102 endif
+
+; bring z-axis to tool change position (+0.500)
+G53 G0 Z0.500
+
+
+; bring plate down so we can rotate it
 M65 P1 ; turn off magazine up
 M64 P0 ; turn on magazine down
-; wait until tool magazine on bottom is high or 4 seconds
-M66 P6 L3 Q4
+; wait until tool magazine on bottom is high or 10 seconds
+M66 P6 L3 Q10
 O104 if [#5399 LT 0]
 	(abort, failed to get magazine down)
 O104 endif
 
 
 
-M68 E3 Q11.0 ; debug
-
 ; tell the carousel module go to position for tool currently in spindle
-; M68 E0 Q#<tool_in_spindle>
-M68 E0 Q#<selected_tool>
+M68 E0 Q#<tool_in_spindle>
+; M68 E0 Q#<selected_tool>
 G4 P0.1
 ; turn on enable to make it go
 M64 P20
@@ -44,12 +59,9 @@ M66 P21 L4 Q10
 O124 if [#5399 LT 0]
 	(abort, carousel never finished being active)
 O124 endif
-
 ; turn off enable
-; G4 P3
 M65 P20
 
-M68 E3 Q12.0 ; debug
 
 ; bring plate up
 M65 P0 ; turn off magazine down
@@ -60,37 +72,82 @@ O134 if [#5399 LT 0]
 	(abort, failed to get magazine up)
 O134 endif
 
+; move arm to tool change position
+M65 P3 ; turn off basic position
+M64 P2 ; turn on changing position
+; make sure we got to changing position
+M66 P8 L3 Q4
+O136 if [#5399 LT 0]
+	(abort, failed to get magazine to changing position)
+	; this is where we died
+O136 endif
 
-M68 E3 Q13.0 ; debug
+; release tool from spindle
+M64 P4 ; open clamp
+; make sure we are unclamped
+M66 P1 L3 Q2
+O144 if [#5399 LT 0]
+	(abort, failed to unclamp)
+O144 endif
+
+; send plate down and pull tool out of spindle
+M65 P1 ; turn off magazine up
+M64 P0 ; turn on magazine down
+; wait until plate is down or 5 seconds
+M66 P6 L3 Q5
+O154 if [#5399 LT 0]
+	(abort, failed to get magazine down)
+O154 endif
+
+; tell the carousel module go to position for tool to put in spindle
+M68 E0 Q#<selected_tool>
+G4 P0.1
+; turn on enable to make it go
+M64 P20
+; wait until ready or 10 seconds
+M66 P20 L3 Q10
+O164 if [#5399 LT 0]
+	(abort, carousel never got ready)
+O164 endif
+; wait until not active or 10 seconds
+M66 P21 L4 Q10
+O166 if [#5399 LT 0]
+	(abort, carousel never finished being active)
+O166 endif
+; turn off enable
+M65 P20
+
+; bring plate up
+M65 P0 ; turn off magazine down
+M64 P1 ; turn on magazine up
+; wait until tool magazine on top is high or 5 seconds
+M66 P7 L3 Q5
+O174 if [#5399 LT 0]
+	(abort, failed to get magazine up)
+O174 endif
+
+; clamp tool
+M65 P4 ; close clamp
+; make sure we are clamped
+M66 P0 L3 Q2
+O184 if [#5399 LT 0]
+	(abort, failed to clamp)
+O184 endif
+
+; retract tool changer arm
+M65 P2 ; turn off changing position
+M64 P3 ; turn on basic position
+; make sure we got to basic position
+M66 P9 L3 Q4
+O194 if [#5399 LT 0]
+	(abort, failed to get magazine to basic position)
+O194 endif
 
 
 
-; units up off
-;M65 P6
-; router down
-;M64 P5
-
-; verify router is down, waiting for 5 seconds
-;M66 P4 L3 Q5
-
-
-; position router to tool change Z
-;G53 G0 Z-1.2345
-
-; dwell 2.2 seconds
-;G4 P2.2
 
 ; stub turn laser off
 M65 P15
-
-; router up
-;G53 G0 Z0
-;M65 P5
-;M64 P6
-
-; verify router is up, waiting for 5 seconds
-;M66 P5 L3 Q5
-
 
 
 ; [FROM MANUAL] afterwards the z-axis moves to the change position
