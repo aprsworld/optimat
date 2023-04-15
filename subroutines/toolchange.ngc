@@ -1,6 +1,30 @@
 o<toolchange> sub
 
-; TODO: put away tool before getting next one
+; put away tool before getting next one
+O5 IF [#<tool_in_spindle> LE 6]
+; disconnect router motor from VFD
+; release KEB parameters
+O05 ELSEIF [#<tool_in_spindle> EQ 7]
+	M65 P20 ; shut off laser crosshair
+O05 ELSE 
+	; retract all the spindles
+	M65 P8
+	M65 P9
+	M65 P10
+	M65 P11
+	M65 P12
+	M65 P13
+	M65 P14
+	M65 P15
+	M65 P16
+	M65 P17
+	M65 P18
+	M65 P19
+	; units up
+	M64 P6
+O05 ENDIF
+
+
 
 ; load tool
 ; tools 0 through 6 are from ATC carousel and go into the main spindle
@@ -11,8 +35,8 @@ O10 IF [#<selected_tool> LE 6]
 ; net tool-prep-loop iocontrol.0.tool-prepare iocontrol.0.tool-prepared
 ; net tool-change-loop iocontrol.0.tool-change iocontrol.0.tool-changed
 
-; stub turn laser on 
-M64 P20
+; TODO: connect router motor to VFD
+; TODO: set KEB parameters
 
 ; TODO: make sure optimat_i_router_1_standstill
 
@@ -182,13 +206,49 @@ M65 P20
 ; [FROM MANUAL] done
 
 O10 ELSEIF [#<selected_tool> EQ 7]
-M64 P20 ; turn on laser crosshair
+	M64 P20 ; turn on laser crosshair
 
-O10 ELSEIF [#<selected_tool> EQ 8]
-M64 P9 ; turn on spindle 1
+O10 ELSEIF [#<selected_tool> GE 16]
+	; drill bank
 
-O10 ELSEIF [#<selected_tool> EQ 9]
-M64 P10 ; turn on spindle 2
+	; go up on Z for hopefully clerance
+	G53 G90 G0 Z0.500
+
+	O20 IF [#<selected_tool> EQ 16]
+		M64 P8 ; turn on grooving saw
+	O20 IF [#<selected_tool> EQ 17]
+		M64 P9 ; turn on spindle 1
+	O20 ELSEIF [#<selected_tool> EQ 18]
+		M64 P10 ; turn on spindle 2
+	O20 ELSEIF [#<selected_tool> EQ 19]
+		M64 P10 ; turn on spindle 3
+	O20 ELSEIF [#<selected_tool> EQ 20]
+		M64 P10 ; turn on spindle 4
+	O20 ELSEIF [#<selected_tool> EQ 21]
+		M64 P10 ; turn on spindle 5
+	O20 ELSEIF [#<selected_tool> EQ 22]
+		M64 P10 ; turn on spindle 6
+	O20 ELSEIF [#<selected_tool> EQ 23]
+		M64 P10 ; turn on spindle 7
+	O20 ELSEIF [#<selected_tool> EQ 24]
+		M64 P10 ; turn on spindle 8
+	O20 ELSEIF [#<selected_tool> EQ 25]
+		M64 P10 ; turn on spindle 9
+	O20 ELSEIF [#<selected_tool> EQ 26]
+		M64 P10 ; turn on spindle 10
+	O20 ELSEIF [#<selected_tool> EQ 27]
+		M64 P10 ; turn on spindle 11
+	O20 ELSEIF [#<selected_tool> EQ 28]
+		M65 P6  ; turn off units up
+		M64 P10 ; turn on horizontal y 
+	O20 ELSEIF [#<selected_tool> EQ 29]
+		M65 P6  ; turn off units up
+		M64 P10 ; turn on horizontal x 1
+	O20 ELSEIF [#<selected_tool> EQ 30]
+		M65 P6  ; turn off units up
+		M64 P10 ; turn on horizontal x 2
+	O20 ENDIF
+	
 
 O10 ENDIF
 

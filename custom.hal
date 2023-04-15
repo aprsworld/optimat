@@ -246,7 +246,7 @@ net carousel-motor-rev  optimat_o_tool_magazine_turn_right => carousel.0.motor-r
 addf carousel.0 servo-thread
 
 # get requested tool carousel number from analog m code and convert it to s32 for carousel
-loadrt conv_float_s32 n=1
+loadrt conv_float_s32 
 addf conv-float-s32.0 servo-thread 
 net carousel-pos-req motion.analog-out-00 conv-float-s32.0.in
 net carousel-pos-s32 conv-float-s32.0.out carousel.0.pocket-number
