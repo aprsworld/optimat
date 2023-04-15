@@ -10,9 +10,9 @@
 # router hardware
 # optimat_output is an output from LinuxCNC / MESA to the router
 alias pin hm2_5i25.0.7i77.0.0.output-00 optimat_o_optimat_watchdog
-alias pin hm2_5i25.0.7i77.0.0.output-01 optimat_o_vacuum_pump # APRS change
-alias pin hm2_5i25.0.7i77.0.0.output-02 optimat_o_spindle_chiller # APRS change
-alias pin hm2_5i25.0.7i77.0.0.output-03 optimat_o_dust_collector # APRS change
+alias pin hm2_5i25.0.7i77.0.0.output-01 optimat_o_vacuum_pump     # M100 (on) / M101 (off)
+alias pin hm2_5i25.0.7i77.0.0.output-02 optimat_o_spindle_chiller # M102 (on) / M103 (off)
+alias pin hm2_5i25.0.7i77.0.0.output-03 optimat_o_dust_collector  # M104 (on) / M105 (off)
 alias pin hm2_5i25.0.7i77.0.0.output-04 optimat_o_vacuum_right
 alias pin hm2_5i25.0.7i77.0.0.output-05 optimat_o_vacuum_left
 alias pin hm2_5i25.0.7i77.0.0.output-06 optimat_o_stopper_right
@@ -268,7 +268,6 @@ net tool-change-mag-on-bottom       optimat_i_tool_magazine_on_bottom         =>
 net tool-change-mag-on-top          optimat_i_tool_magazine_on_top            => motion.digital-in-07 
 net tool-change-mag-on-changing     optimat_i_tool_magazine_changing_position => motion.digital-in-08 
 net tool-change-mag-on-basic        optimat_i_tool_magazine_basic_position    => motion.digital-in-09 
-# net tool-change-mag-on-basic        optimat_i_tool_magazine_basic_position    => motion.digital-in-09 
 
 net tool-change-carousel-ready      carousel.0.ready                          => motion.digital-in-20
 net tool-change-carousel-active     carousel.0.active                         => motion.digital-in-21
