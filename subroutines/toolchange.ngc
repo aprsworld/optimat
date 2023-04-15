@@ -7,6 +7,9 @@ o<toolchange> sub
 ; stub turn laser on 
 M64 P15
 
+; TODO: make sure optimat_i_router_1_standstill
+
+
 ; from page 5.5.4 of manual
 ; [FROM MANUAL] main spindle is set pneumatically into the lower position
 

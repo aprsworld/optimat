@@ -18,26 +18,26 @@ alias pin hm2_5i25.0.7i77.0.0.output-05 optimat_o_vacuum_left
 alias pin hm2_5i25.0.7i77.0.0.output-06 optimat_o_stopper_right
 alias pin hm2_5i25.0.7i77.0.0.output-07 optimat_o_stopper_left
 alias pin hm2_5i25.0.7i77.0.0.output-08 optimat_o_motor_drilling_unit
-alias pin hm2_5i25.0.7i77.0.0.output-09 optimat_o_horizontal_y_spindle_1_down
-alias pin hm2_5i25.0.7i77.0.0.output-10 optimat_o_horizontal_x_spindle_1_down
-alias pin hm2_5i25.0.7i77.0.0.output-11 optimat_o_horizontal_x_spindle_2_down
+alias pin hm2_5i25.0.7i77.0.0.output-09 optimat_o_horizontal_y_spindle_1_down # needs units_up to retract
+alias pin hm2_5i25.0.7i77.0.0.output-10 optimat_o_horizontal_x_spindle_1_down # needs units_up to retract and outer most (east) ... mount laser engraver here?
+alias pin hm2_5i25.0.7i77.0.0.output-11 optimat_o_horizontal_x_spindle_2_down # needs units_up to retract
 
-alias pin hm2_5i25.0.7i76.0.3.output-00 optimat_o_groove_saw_down
+alias pin hm2_5i25.0.7i76.0.3.output-00 optimat_o_groove_saw_down # does not need units_up
 alias pin hm2_5i25.0.7i76.0.3.output-01 optimat_o_units_up
 alias pin hm2_5i25.0.7i76.0.3.output-02 optimat_o_forced_lubrication_on
 alias pin hm2_5i25.0.7i76.0.3.output-03 optimat_o_forced_lubrication_air
-alias pin hm2_5i25.0.7i76.0.3.output-04 optimat_o_spindle_1
+alias pin hm2_5i25.0.7i76.0.3.output-04 optimat_o_spindle_1 # spindles don't need units up to retract
 alias pin hm2_5i25.0.7i76.0.3.output-05 optimat_o_spindle_2
 alias pin hm2_5i25.0.7i76.0.3.output-06 optimat_o_spindle_3
 alias pin hm2_5i25.0.7i76.0.3.output-07 optimat_o_spindle_4
 alias pin hm2_5i25.0.7i76.0.3.output-08 optimat_o_spindle_5
 alias pin hm2_5i25.0.7i76.0.3.output-09 optimat_o_spindle_6
-alias pin hm2_5i25.0.7i76.0.3.output-10 optimat_o_spindle_7
+alias pin hm2_5i25.0.7i76.0.3.output-10 optimat_o_spindle_7 # leaks!
 alias pin hm2_5i25.0.7i76.0.3.output-11 optimat_o_spindle_8
 
 alias pin hm2_5i25.0.7i66.0.2.output-00 optimat_o_spindle_9
-alias pin hm2_5i25.0.7i66.0.2.output-01 optimat_o_spindle_10
-alias pin hm2_5i25.0.7i66.0.2.output-02 optimat_o_spindle_11
+alias pin hm2_5i25.0.7i66.0.2.output-01 optimat_o_spindle_10 # sticky
+alias pin hm2_5i25.0.7i66.0.2.output-02 optimat_o_spindle_11 # connected to solenoid, but pneumatic tube is capped?
 # alias pin hm2_5i25.0.7i66.0.2.output-03 optimat_o_ # available output
 # alias pin hm2_5i25.0.7i66.0.2.output-04 optimat_o_ # available output
 # alias pin hm2_5i25.0.7i66.0.2.output-05 optimat_o_ # available output
