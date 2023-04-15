@@ -245,12 +245,18 @@ net carousel-motor-rev  optimat_o_tool_magazine_turn_right => carousel.0.motor-r
 
 addf carousel.0 servo-thread
 
-# float to s32 to get analog M6x code converted to s32 for carousel
-# loadrt conv-float-s32 n=1
-loadrt conv_float_s32 
+# get requested tool carousel number from analog m code and convert it to s32 for carousel
+loadrt conv_float_s32 n=1
 addf conv-float-s32.0 servo-thread 
 net carousel-pos-req motion.analog-out-00 conv-float-s32.0.in
 net carousel-pos-s32 conv-float-s32.0.out carousel.0.pocket-number
+
+# send current tool carousel position from s32 from carousel to float for analog m code
+# loadrt conv_s32_float n=1
+# addf conv-s32-float.0 servo-thread 
+# net carousel-pos-current carousel.0.current-position conv-s32-float.0.in
+# net carousel-pos-current-float conv-s32-float.0.out motion.analog-in-00
+
 
 # make tool change work
 net tool-prep-loop iocontrol.0.tool-prepare iocontrol.0.tool-prepared
@@ -268,9 +274,8 @@ net tool-change-mag-on-bottom       optimat_i_tool_magazine_on_bottom         =>
 net tool-change-mag-on-top          optimat_i_tool_magazine_on_top            => motion.digital-in-07 
 net tool-change-mag-on-changing     optimat_i_tool_magazine_changing_position => motion.digital-in-08 
 net tool-change-mag-on-basic        optimat_i_tool_magazine_basic_position    => motion.digital-in-09 
-
-net tool-change-carousel-ready      carousel.0.ready                          => motion.digital-in-20
-net tool-change-carousel-active     carousel.0.active                         => motion.digital-in-21
+net tool-change-carousel-ready      carousel.0.ready                          => motion.digital-in-10
+net tool-change-carousel-active     carousel.0.active                         => motion.digital-in-11
 
 
 net tool-change-mag-down            optimat_o_tool_magazine_down              => motion.digital-out-00
@@ -280,10 +285,26 @@ net tool-change-mag-basic           optimat_o_tool_magazine_basic_position    =>
 net tool-change-release             optimat_o_router_1_clamping               => motion.digital-out-04
 net tool-change-router-down         optimat_o_router_1_down                   => motion.digital-out-05
 net tool-change-units-up            optimat_o_units_up                        => motion.digital-out-06
+net tool-change-carousel-enable     carousel.0.enable                         => motion.digital-out-07
 
-net laser-crosshair                 optimat_o_laser_crosshair                 => motion.digital-out-15
+net tool-change-groove-saw          optimat_o_groove_saw_down                 => motion.digital-out-08
+net tool-change-spindle-1-down      optimat_o_spindle_1                       => motion.digital-out-09
+net tool-change-spindle-2-down      optimat_o_spindle_2                       => motion.digital-out-10
+net tool-change-spindle-3-down      optimat_o_spindle_3                       => motion.digital-out-11
+net tool-change-spindle-4-down      optimat_o_spindle_4                       => motion.digital-out-12
+net tool-change-spindle-5-down      optimat_o_spindle_5                       => motion.digital-out-13
+net tool-change-spindle-6-down      optimat_o_spindle_6                       => motion.digital-out-14
+net tool-change-spindle-7-down      optimat_o_spindle_7                       => motion.digital-out-15
+net tool-change-spindle-8-down      optimat_o_spindle_8                       => motion.digital-out-16
+net tool-change-spindle-9-down      optimat_o_spindle_9                       => motion.digital-out-17
+net tool-change-spindle-10-down     optimat_o_spindle_10                      => motion.digital-out-18
+net tool-change-spindle-11-down     optimat_o_spindle_11                      => motion.digital-out-19
+net tool-change-laser-crosshair     optimat_o_laser_crosshair                 => motion.digital-out-20
+# net tool-change-laser-engraver      optimat_o_laser_engraver                  => motion.digital-out-21
+net tool-change-horiz-y-1           optimat_o_horizontal_y_spindle_1_down     => motion.digital-out-22
+net tool-change-horiz-x-1           optimat_o_horizontal_x_spindle_1_down     => motion.digital-out-23
+net tool-change-horiz-x-2           optimat_o_horizontal_x_spindle_2_down     => motion.digital-out-24
 
-net tool-change-carousel-enable     carousel.0.enable                         => motion.digital-out-20
 
 
 

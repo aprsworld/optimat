@@ -1,7 +1,7 @@
-T1 P0 ;tool one 
-T4 P1 ;tool four 
+T7 P0 X-10.735000 Y-3.063400 ;laser crosshair 
+T3 P1 ;tool three 
 T6 P2 ;tool six 
-T2 P4 ;tool two 
-T3 P5 ;tool three 
-T0 P6 ;tool zero 
-T5 P100 ;tool five 
+T1 P3 ;1/8" DRILL IN ER32 COLLET 
+T4 P5 ;tool four 
+T5 P6 ;tool five 
+T2 P7 ;tool two 
