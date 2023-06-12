@@ -159,9 +159,25 @@ alias pin hm2_5i25.0.7i66.0.4.input-12 hmi_i_panel_fro_f
 
 
 
+
 # net connect our stuff
 # net coolant-flood  =>  optimat_o_laser_crosshair
-net coolant-mist => optimat_o_mist_coolant
+# mist coolant (air blast) is on only if it turned on and tool unclamp not active
+
+loadrt xor2 count=1
+loadrt and2 count=1
+addf xor2.0 servo-thread
+addf and2.0 servo-thread
+net coolant-mist-xor2-in0 xor2.0.in0 <= iocontrol.0.coolant-mist
+net optimat_s_router_1_clamping optimat_o_router_1_clamping => xor2.0.in1
+# net coolant-mist optimat_o_mist_coolant <= xor2.0.out
+net coolant-mist-xor2-in0 => and2.0.in0
+net coolant-mist-and2-in1 and2.0.in1 <= xor2.0.out
+net coolant-mist optimat_o_mist_coolant <= and2.0.out
+
+# net both-on parport.0.pin-14-out <= and2.0.out
+# just connect without xor
+# net coolant-mist => optimat_o_mist_coolant
 
 
 # for GladeVCP
@@ -283,7 +299,8 @@ net tool-change-mag-down            optimat_o_tool_magazine_down              =>
 net tool-change-mag-up              optimat_o_tool_magazine_up                => motion.digital-out-01
 net tool-change-mag-changing        optimat_o_tool_magazine_changing_position => motion.digital-out-02
 net tool-change-mag-basic           optimat_o_tool_magazine_basic_position    => motion.digital-out-03
-net tool-change-release             optimat_o_router_1_clamping               => motion.digital-out-04
+# net tool-change-release             optimat_o_router_1_clamping               => motion.digital-out-04
+net optimat_s_router_1_clamping => motion.digital-out-04
 net tool-change-router-down         optimat_o_router_1_down                   => motion.digital-out-05
 net tool-change-units-up            optimat_o_units_up                        => motion.digital-out-06
 net tool-change-carousel-enable     carousel.0.enable                         => motion.digital-out-07
