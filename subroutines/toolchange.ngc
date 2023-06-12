@@ -1,4 +1,6 @@
 o<toolchange> sub
+; save modal state and auto-restore upon leaving this sub-routine
+M73
 
 ; put away tool before getting next one
 O5 IF [#<tool_in_spindle> LE 6]
