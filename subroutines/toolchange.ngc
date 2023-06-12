@@ -191,10 +191,6 @@ O194 endif
 
 
 
-; stub turn laser off
-M65 P20
-
-
 ; [FROM MANUAL] afterwards the z-axis moves to the change position
 
 ; [FROM MANUAL] the changer case moves to the preparing position
@@ -269,6 +265,8 @@ O10 ELSEIF [#<selected_tool> GE 16]
 O10 ENDIF
 
 
+; G43 sets our X,Y,Z offsets, but it appears we can't do it here
+G43
 
 
 ; O200 IF [#<selected_tool> GT 0]

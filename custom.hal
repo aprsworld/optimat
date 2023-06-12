@@ -52,7 +52,7 @@ alias pin hm2_5i25.0.7i66.0.2.output-13 optimat_o_keb_parameter_set_2
 alias pin hm2_5i25.0.7i66.0.2.output-14 optimat_o_keb_parameter_set_4
 alias pin hm2_5i25.0.7i66.0.2.output-15 optimat_o_laser_crosshair
 alias pin hm2_5i25.0.7i66.0.2.output-16 optimat_o_router_1_down
-# alias pin hm2_5i25.0.7i66.0.2.output-17 optimat_o_ # available output
+alias pin hm2_5i25.0.7i66.0.2.output-17 optimat_o_mist_coolant
 alias pin hm2_5i25.0.7i66.0.2.output-18 optimat_o_tool_magazine_turn_right
 alias pin hm2_5i25.0.7i66.0.2.output-19 optimat_o_tool_magazine_turn_left
 alias pin hm2_5i25.0.7i66.0.2.output-20 optimat_o_tool_magazine_down
@@ -161,6 +161,7 @@ alias pin hm2_5i25.0.7i66.0.4.input-12 hmi_i_panel_fro_f
 
 # net connect our stuff
 # net coolant-flood  =>  optimat_o_laser_crosshair
+net coolant-mist => optimat_o_mist_coolant
 
 
 # for GladeVCP
