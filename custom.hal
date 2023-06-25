@@ -224,8 +224,13 @@ net joint-select-d     <=  hmi_i_pendant_jog_axis_4
 
 # spindle control
 # for now we will just keep the contactor to router_1 on
-setp optimat_o_motor_router_1 true
+# TODO need to accomodate drilling motor when tool >= 16 and <= 30
+#
+# for main spindle we need
+# setp optimat_o_motor_router_1 true
 net spindle-enable spindle.0.on => optimat_o_keb_parameter_set_4
+#
+# what do we need for motor drilling unit
 net spindle-cw spindle.0.forward => optimat_o_keb_rotation_forward
 net spindle-ccw spindle.0.reverse => optimat_o_keb_rotation_reverse
 
@@ -325,6 +330,11 @@ net tool-change-laser-crosshair     optimat_o_laser_crosshair                 =>
 net tool-change-horiz-y-1           optimat_o_horizontal_y_spindle_1_down     => motion.digital-out-22
 net tool-change-horiz-x-1           optimat_o_horizontal_x_spindle_1_down     => motion.digital-out-23
 net tool-change-horiz-x-2           optimat_o_horizontal_x_spindle_2_down     => motion.digital-out-24
+net tool-change-motor-router        optimat_o_motor_router_1                  => motion.digital-out-25
+net tool-change-motor-drilling      optimat_o_motor_drilling_unit             => motion.digital-out-26
+net tool-change-motor-keb-param-1   optimat_o_keb_parameter_set_1             => motion.digital-out-27
+net tool-change-motor-keb-param-2   optimat_o_keb_parameter_set_2             => motion.digital-out-28
+net tool-change-motor-keb-param-4   optimat_o_keb_parameter_set_4             => motion.digital-out-29
 
 
 

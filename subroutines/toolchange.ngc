@@ -13,9 +13,6 @@ O2 endif
 
 ; put away tool before getting next one
 O5 IF [#<tool_in_spindle> LE 6]
-	; disconnect router motor from VFD
-	; release KEB parameters
-
 	; router down off
 	M65 P5
 
@@ -63,11 +60,13 @@ O10 IF [#<selected_tool> LE 6]
 	; net tool-prep-loop iocontrol.0.tool-prepare iocontrol.0.tool-prepared
 	; net tool-change-loop iocontrol.0.tool-change iocontrol.0.tool-changed
 
-	; TODO: connect router motor to VFD
-	; TODO: set KEB parameters
 
-	; TODO: make sure optimat_i_router_1_standstill
-
+	; connect KEB VFD to correct motor
+	M65 P26 ; disconnect drilling unit to KEB VFD
+	M64 P25 ; connect router motor to KEB VFD
+	; set 
+	M65 P27 ; turn off KEB parameter 1 used in drilling motor mode
+	M64 P29
 
 	; from page 5.5.4 of manual
 	; [FROM MANUAL] main spindle is set pneumatically into the lower position
@@ -200,6 +199,11 @@ O10 ELSEIF [#<selected_tool> EQ 7]
 O10 ELSEIF [#<selected_tool> GE 16]
 	; drill bank
 
+	M65 P25 ; disconnect router motor from KEB VFD
+	M64 P26 ; connect drilling unit motor to KEB VFD
+	; set 
+	M64 P27 ; turn on KEB parameter 1 used in drilling motor mode
+
 	; bring router up
 	M65 P5 ; turn off router down
 	M64 P6 ; turn on units up
@@ -252,7 +256,7 @@ O10 ELSEIF [#<selected_tool> GE 16]
 O10 ENDIF
 
 
-; G43 sets our X,Y,Z offsets, but it appears we can't do it here
+; G43 sets our X,Y,Z offsets
 G43
 
 
