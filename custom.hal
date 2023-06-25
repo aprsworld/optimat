@@ -229,6 +229,9 @@ net spindle-enable spindle.0.on => optimat_o_keb_parameter_set_4
 net spindle-cw spindle.0.forward => optimat_o_keb_rotation_forward
 net spindle-ccw spindle.0.reverse => optimat_o_keb_rotation_reverse
 
+# this should inhibit feed moves until the spindle has reached speed
+net spindle-at-speed <= optimat_i_router_nominal_speed
+
 # examples
 # --- FORCE-PIN-TRUE ---
 #setp hm2_5i25.0.7i77.0.0.output-00 true
@@ -293,6 +296,7 @@ net tool-change-mag-on-changing     optimat_i_tool_magazine_changing_position =>
 net tool-change-mag-on-basic        optimat_i_tool_magazine_basic_position    => motion.digital-in-09 
 net tool-change-carousel-ready      carousel.0.ready                          => motion.digital-in-10
 net tool-change-carousel-active     carousel.0.active                         => motion.digital-in-11
+net tool-change-router-standstill   optimat_i_router_standstill               => motion.digital-in-12
 
 
 net tool-change-mag-down            optimat_o_tool_magazine_down              => motion.digital-out-00

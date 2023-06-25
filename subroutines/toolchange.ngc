@@ -2,6 +2,15 @@ o<toolchange> sub
 ; save modal state and auto-restore upon leaving this sub-routine
 M73
 
+; wait for spindle standstill
+M66 P3 L3 Q4
+O2 if [#5399 LT 0]
+	(abort, spindle not at standstill)
+O2 endif
+
+
+
+
 ; put away tool before getting next one
 O5 IF [#<tool_in_spindle> LE 6]
 	; disconnect router motor from VFD
@@ -15,24 +24,30 @@ O5 IF [#<tool_in_spindle> LE 6]
 O05 ELSEIF [#<tool_in_spindle> EQ 7]
 	M65 P20 ; shut off laser crosshair
 O05 ELSE 
-	; retract all the spindles
-	M65 P8
-	M65 P9
-	M65 P10
-	M65 P11
-	M65 P12
-	M65 P13
-	M65 P14
-	M65 P15
-	M65 P16
-	M65 P17
-	M65 P18
-	M65 P19
-	M65 P22
-	M65 P23
-	M65 P24
 	; units up
 	M64 P6
+
+	; retract all the spindles
+	M65 P8  ; groove saw
+	M65 P9  ; spindle 1
+	M65 P10 ; spindle 2
+	M65 P11 ; spindle 3
+	M65 P12 ; spindle 4
+	M65 P13 ; spindle 5
+	M65 P14 ; spindle 6
+	M65 P15 ; spindle 7
+	M65 P16 ; spindle 8
+	M65 P17 ; spindle 9
+	M65 P18 ; spindle 10
+	M65 P19 ; spindle 11
+	; P20 is laser crosshair
+	; P21 is laser engraver
+	M65 P22 ; horizontal y spindle 1
+	M65 P23 ; horizontal x spindle 1
+	M65 P24 ; horizontal x spindle 2
+	
+	; give it 2 seconds to do its thing
+	G4 P2.0
 
 	; TODO: check to make sure our things with _up sensors actually got up
 O05 ENDIF
@@ -44,175 +59,140 @@ O05 ENDIF
 ; tools >6 are individually activated
 
 O10 IF [#<selected_tool> LE 6]
-; we need to do these nets to LinuxCNC knows we are done, I guess
-; net tool-prep-loop iocontrol.0.tool-prepare iocontrol.0.tool-prepared
-; net tool-change-loop iocontrol.0.tool-change iocontrol.0.tool-changed
+	; we need to do these nets to LinuxCNC knows we are done, I guess
+	; net tool-prep-loop iocontrol.0.tool-prepare iocontrol.0.tool-prepared
+	; net tool-change-loop iocontrol.0.tool-change iocontrol.0.tool-changed
 
-; TODO: connect router motor to VFD
-; TODO: set KEB parameters
+	; TODO: connect router motor to VFD
+	; TODO: set KEB parameters
 
-; TODO: make sure optimat_i_router_1_standstill
-
-
-; from page 5.5.4 of manual
-; [FROM MANUAL] main spindle is set pneumatically into the lower position
+	; TODO: make sure optimat_i_router_1_standstill
 
 
-; prepare carousel 
-
-; M68 E3 Q10.0 ; debug
-
-; make sure arm is in basic position
-M65 P2 ; turn off changing position
-M64 P3 ; turn on basic position
-
-; make sure router is down
-M65 P6 ; turn off units up
-M64 P5 ; turn on router down
-; wait until router is on bottom
-M66 P4 L3 Q4
-O102 if [#5399 LT 0]
-	(abort, failed to get router pneumatically down)
-O102 endif
-
-; bring z-axis to tool change position (+0.510)
-G53 G0 Z0.510
+	; from page 5.5.4 of manual
+	; [FROM MANUAL] main spindle is set pneumatically into the lower position
 
 
-; bring plate down so we can rotate it
-; M65 P1 ; turn off magazine up
-; M64 P0 ; turn on magazine down .... this one physically sticks
-; wait until tool magazine on bottom is high or 10 seconds
-; M66 P6 L3 Q30
-; O104 if [#5399 LT 0]
-; 	(abort, failed to get magazine down)
-; O104 endif
+	; prepare carousel 
+
+	; M68 E3 Q10.0 ; debug
+
+	; make sure arm is in basic position
+	M65 P2 ; turn off changing position
+	M64 P3 ; turn on basic position
+
+	; make sure router is down
+	M65 P6 ; turn off units up
+	M64 P5 ; turn on router down
+	; wait until router is on bottom
+	M66 P4 L3 Q4
+	O102 if [#5399 LT 0]
+		(abort, failed to get router pneumatically down)
+	O102 endif
+
+	; bring z-axis to tool change position (+0.510)
+	G53 G0 Z0.510
 
 
+	; bring plate up
+	M65 P0 ; turn off magazine down
+	M64 P1 ; turn on magazine up
+	; wait until tool magazine on top is high or 5 seconds
+	M66 P7 L3 Q5
+	O134 if [#5399 LT 0]
+		(abort, failed to get magazine up)
+	O134 endif
 
-; tell the carousel module go to position for tool currently in spindle
-; M68 E0 Q#<tool_in_spindle>
-; M68 E0 Q#<selected_tool>
-; G4 P0.1
-; turn on enable to make it go
-; M64 P7
-; wait until ready or 10 seconds
-; M66 P10 L3 Q10
-; O114 if [#5399 LT 0]
-; 	(abort, carousel never got ready)
-; O114 endif
-; wait until not active or 10 seconds
-; M66 P11 L4 Q10
-; O124 if [#5399 LT 0]
-; 	(abort, carousel never finished being active)
-; O124 endif
-; turn off enable
-; M65 P7
+	; move arm to tool change position
+	M65 P3 ; turn off basic position
+	M64 P2 ; turn on changing position
+	; make sure we got to changing position
+	M66 P8 L3 Q4
+	O136 if [#5399 LT 0]
+		(abort, failed to get magazine to changing position)
+	O136 endif
 
+	; release tool from spindle
+	M64 P4 ; open clamp
+	; make sure we are unclamped
+	M66 P1 L3 Q2
+	O144 if [#5399 LT 0]
+		(abort, failed to unclamp)
+	O144 endif
 
-; bring plate up
-M65 P0 ; turn off magazine down
-M64 P1 ; turn on magazine up
-; wait until tool magazine on top is high or 5 seconds
-M66 P7 L3 Q5
-O134 if [#5399 LT 0]
-	(abort, failed to get magazine up)
-O134 endif
+	; send plate down and pull tool out of spindle
+	M65 P1 ; turn off magazine up
+	M64 P0 ; turn on magazine down
+	; wait until plate is down or 10 seconds
+	M66 P6 L3 Q10
+	O154 if [#5399 LT 0]
+		(abort, failed to get magazine down)
+	O154 endif
 
-; move arm to tool change position
-M65 P3 ; turn off basic position
-M64 P2 ; turn on changing position
-; make sure we got to changing position
-M66 P8 L3 Q4
-O136 if [#5399 LT 0]
-	(abort, failed to get magazine to changing position)
-	; this is where we died
-O136 endif
+	; tell the carousel module go to position for tool to put in spindle
+	M68 E0 Q#<selected_tool>
+	G4 P0.1
+	; turn on enable to make it go
+	M64 P7
+	; wait until ready or 10 seconds
+	M66 P10 L3 Q10
+	O164 if [#5399 LT 0]
+		(abort, carousel never got ready)
+	O164 endif
+	; wait until not active or 10 seconds
+	M66 P11 L4 Q10
+	O166 if [#5399 LT 0]
+		(abort, carousel never finished being active)
+	O166 endif
+	; turn off enable
+	M65 P7
 
-; release tool from spindle
-M64 P4 ; open clamp
-; make sure we are unclamped
-M66 P1 L3 Q2
-O144 if [#5399 LT 0]
-	(abort, failed to unclamp)
-O144 endif
+	; bring plate up
+	M65 P0 ; turn off magazine down
+	M64 P1 ; turn on magazine up
+	; wait until tool magazine on top is high or 5 seconds
+	M66 P7 L3 Q5
+	O174 if [#5399 LT 0]
+		(abort, failed to get magazine up)
+	O174 endif
 
-; send plate down and pull tool out of spindle
-M65 P1 ; turn off magazine up
-M64 P0 ; turn on magazine down
-; wait until plate is down or 5 seconds
-M66 P6 L3 Q5
-O154 if [#5399 LT 0]
-	(abort, failed to get magazine down)
-O154 endif
+	; clamp tool
+	M65 P4 ; close clamp
+	; make sure we are clamped
+	M66 P0 L3 Q2
+	O184 if [#5399 LT 0]
+		(abort, failed to clamp)
+	O184 endif
 
-; tell the carousel module go to position for tool to put in spindle
-M68 E0 Q#<selected_tool>
-G4 P0.1
-; turn on enable to make it go
-M64 P7
-; wait until ready or 10 seconds
-M66 P10 L3 Q10
-O164 if [#5399 LT 0]
-	(abort, carousel never got ready)
-O164 endif
-; wait until not active or 10 seconds
-M66 P11 L4 Q10
-O166 if [#5399 LT 0]
-	(abort, carousel never finished being active)
-O166 endif
-; turn off enable
-M65 P7
+	; retract tool changer arm
+	M65 P2 ; turn off changing position
+	M64 P3 ; turn on basic position
+	; make sure we got to basic position
+	M66 P9 L3 Q4
+	O194 if [#5399 LT 0]
+		(abort, failed to get magazine to basic position)
+	O194 endif
 
-; bring plate up
-M65 P0 ; turn off magazine down
-M64 P1 ; turn on magazine up
-; wait until tool magazine on top is high or 5 seconds
-M66 P7 L3 Q5
-O174 if [#5399 LT 0]
-	(abort, failed to get magazine up)
-O174 endif
+	; [FROM MANUAL] afterwards the z-axis moves to the change position
 
-; clamp tool
-M65 P4 ; close clamp
-; make sure we are clamped
-M66 P0 L3 Q2
-O184 if [#5399 LT 0]
-	(abort, failed to clamp)
-O184 endif
+	; [FROM MANUAL] the changer case moves to the preparing position
+	; [FROM MANUAL] doing this, the empty tool holding grip snap into the ring groove
+	; [FROM MANUAL] of the HSK holder which is the main spindle
 
-; retract tool changer arm
-M65 P2 ; turn off changing position
-M64 P3 ; turn on basic position
-; make sure we got to basic position
-M66 P9 L3 Q4
-O194 if [#5399 LT 0]
-	(abort, failed to get magazine to basic position)
-O194 endif
+	; [FROM MANUAL] tool is released in the spindle
 
+	; [FROM MANUAL] the magazine plate will be pneumatically lowered onto the changing 
+	; [FROM MANUAL] position and draw the tool out of the cone
 
+	; [FROM MANUAL] the magazine plate turns the tool which has to be inserted
+	; [FROM MANUAL] under the main spindle
 
+	; [FROM MANUAL] the magazine plate will be removed into the initial position and insert
+	; [FROM MANUAL] the new tool into the spindle
 
-; [FROM MANUAL] afterwards the z-axis moves to the change position
+	; [FROM MANUAL] the pneumatic cylinder of the changer case removes into the initial position
 
-; [FROM MANUAL] the changer case moves to the preparing position
-; [FROM MANUAL] doing this, the empty tool holding grip snap into the ring groove
-; [FROM MANUAL] of the HSK holder which is the main spindle
-
-; [FROM MANUAL] tool is released in the spindle
-
-; [FROM MANUAL] the magazine plate will be pneumatically lowered onto the changing 
-; [FROM MANUAL] position and draw the tool out of the cone
-
-; [FROM MANUAL] the magazine plate turns the tool which has to be inserted
-; [FROM MANUAL] under the main spindle
-
-; [FROM MANUAL] the magazine plate will be removed into the initial position and insert
-; [FROM MANUAL] the new tool into the spindle
-
-; [FROM MANUAL] the pneumatic cylinder of the changer case removes into the initial position
-
-; [FROM MANUAL] done
+	; [FROM MANUAL] done
 
 O10 ELSEIF [#<selected_tool> EQ 7]
 	M64 P20 ; turn on laser crosshair
@@ -220,9 +200,17 @@ O10 ELSEIF [#<selected_tool> EQ 7]
 O10 ELSEIF [#<selected_tool> GE 16]
 	; drill bank
 
+	; bring router up
+	M65 P5 ; turn off router down
+	M64 P6 ; turn on units up
+	; wait until router is on top
+	M66 P5 L3 Q4
+	O19 if [#5399 LT 0]
+		(abort, failed to get router pneumatically up when activating drill bank tool)
+	O19 endif
 	
 
-	; go up on Z for hopefully clerance
+	; go up on Z for hopefully clearance
 	G53 G90 G0 Z0.510
 
 	; turn off units up
@@ -253,13 +241,10 @@ O10 ELSEIF [#<selected_tool> GE 16]
 	O20 ELSEIF [#<selected_tool> EQ 27]
 		M64 P19 ; turn on spindle 11
 	O20 ELSEIF [#<selected_tool> EQ 28]
-		M65 P6  ; turn off units up
 		M64 P22 ; turn on horizontal y 
 	O20 ELSEIF [#<selected_tool> EQ 29]
-		M65 P6  ; turn off units up
 		M64 P23 ; turn on horizontal x 1
 	O20 ELSEIF [#<selected_tool> EQ 30]
-		M65 P6  ; turn off units up
 		M64 P24 ; turn on horizontal x 2
 	O20 ENDIF
 	
@@ -270,8 +255,6 @@ O10 ENDIF
 ; G43 sets our X,Y,Z offsets, but it appears we can't do it here
 G43
 
-
-; O200 IF [#<selected_tool> GT 0]
 
 
 
