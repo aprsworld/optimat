@@ -296,7 +296,6 @@ net tool-change-mag-on-changing     optimat_i_tool_magazine_changing_position =>
 net tool-change-mag-on-basic        optimat_i_tool_magazine_basic_position    => motion.digital-in-09 
 net tool-change-carousel-ready      carousel.0.ready                          => motion.digital-in-10
 net tool-change-carousel-active     carousel.0.active                         => motion.digital-in-11
-net tool-change-router-standstill   optimat_i_router_standstill               => motion.digital-in-12
 
 
 net tool-change-mag-down            optimat_o_tool_magazine_down              => motion.digital-out-00
