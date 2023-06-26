@@ -2,6 +2,8 @@ o<toolchange> sub
 ; save modal state and auto-restore upon leaving this sub-routine
 M73
 
+; shut off spindles in case somebody was stupid!
+M5
 ; wait for spindle standstill
 M66 P3 L3 Q4
 O2 if [#5399 LT 0]
@@ -257,7 +259,8 @@ O10 ENDIF
 
 
 ; G43 sets our X,Y,Z offsets
-G43
+; G43
+; but it doesn't seem to work here?
 
 
 

@@ -228,7 +228,7 @@ net joint-select-d     <=  hmi_i_pendant_jog_axis_4
 #
 # for main spindle we need
 # setp optimat_o_motor_router_1 true
-net spindle-enable spindle.0.on => optimat_o_keb_parameter_set_4
+# net spindle-enable spindle.0.on => optimat_o_keb_parameter_set_4
 #
 # what do we need for motor drilling unit
 net spindle-cw spindle.0.forward => optimat_o_keb_rotation_forward
