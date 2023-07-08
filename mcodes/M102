@@ -1,3 +1,5 @@
 #!/bin/bash
 halcmd setp optimat_o_spindle_chiller true
+DATE=`date +"%Y-%m-%d %H:%M:%S"`
+mosquitto_pub -h localhost -t /cnc/optimat/debug -m "# $DATE: SPINDLE CHILLER ON (M102) ARGV[1]:$1 ARGV[2]:$2"
 exit 0
