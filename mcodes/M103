@@ -1,8 +1,3 @@
 #!/bin/bash
 halcmd setp optimat_o_spindle_chiller false
-DATE=`date +"%Y-%m-%d %H:%M:%S"`
-# NLINE=`halcmd -s show pin motion.program-line | xargs | cut --delim=" " --fields=4`
-ME="${0##*/}"
-JSON=`jo date="$DATE" mcode="$ME" p="$1" q="$2"`
-mosquitto_pub -h localhost -t /cnc/optimat/debug -m "$JSON"
 exit 0

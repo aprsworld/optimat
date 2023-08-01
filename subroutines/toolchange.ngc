@@ -2,6 +2,8 @@ o<toolchange> sub
 ; save modal state and auto-restore upon leaving this sub-routine
 M73
 
+M198 P3 Q#<selected_tool> ; log our tool change
+
 ; shut off spindles in case somebody was stupid!
 M5
 ; wait for spindle standstill
