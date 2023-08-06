@@ -1,0 +1,7 @@
+#!/bin/bash
+# send status messages to MQTT host
+DATE=`date +"%Y-%m-%d %H:%M:%S"`
+ME="${0##*/}"
+JSON=`jo date="$DATE" mcode="$ME" p="$1" q="$2"`
+mosquitto_pub -h localhost -t /cnc/optimat/debug -m "$JSON"
+exit 0
