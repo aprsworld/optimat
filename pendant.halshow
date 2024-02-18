@@ -1,0 +1,20 @@
+# halshow watchlist created Sun Feb 18 06:48:46 CST 2024
+
+sig+mpg-scale
+sig+mpg-x
+sig+mpg-y
+sig+mpg-z
+sig+mpg-a
+pin+hm2_5i25.0.encoder.06.count
+pin+axis.x.jog-enable
+pin+axis.x.jog-scale
+pin+axis.x.jog-counts
+pin+axis.x.wheel-jog-active
+pin+axis.y.jog-enable
+pin+axis.y.jog-scale
+pin+axis.y.jog-counts
+pin+axis.y.wheel-jog-active
+pin+axis.z.jog-enable
+pin+axis.z.jog-scale
+pin+axis.z.jog-counts
+pin+axis.z.wheel-jog-active
