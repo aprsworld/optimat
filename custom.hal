@@ -351,16 +351,9 @@ net toggle-stoppers-right toggle.1.out => optimat_o_stopper_right
 addf toggle.1 servo-thread
 
 # jog pendant
-#ENABLE loadrt encoder num_chan=1
 loadrt mux4 count=1
 
-#ENABLE addf encoder.capture-position servo-thread
-#ENABLE addf encoder.update-counters base-thread
 addf mux4.0 servo-thread
-
-# If your MPG outputs a quadrature signal per click set x4 to 1
-# If your MPG puts out 1 pulse per click set x4 to 0
-#ENABLE setp encoder.0.x4-mode 0
 
 # For velocity mode, set to 1
 # In velocity mode the axis stops when the dial is stopped
@@ -373,9 +366,9 @@ setp axis.y.jog-vel-mode 0
 setp axis.z.jog-vel-mode 0
 
 # This sets the scale that will be used based on the input to the mux4
-setp mux4.0.in0 0.00025 # encoder outputs 4x counts, so this equals 0.001
-setp mux4.0.in1 0.00250 # encoder outputs 4x counts, so this equals 0.010
-setp mux4.0.in2 0.02500 # encoder outputs 4x counts, so this equals 0.100
+setp mux4.0.in0 0.000025 # encoder outputs 4x counts, so this equals 0.0001
+setp mux4.0.in1 0.000250 # encoder outputs 4x counts, so this equals 0.0010
+setp mux4.0.in2 0.002500 # encoder outputs 4x counts, so this equals 0.0100
 
 
 # The inputs to the mux4 component
