@@ -63,8 +63,9 @@ alias pin hm2_5i25.0.7i66.0.2.output-23 optimat_o_tool_magazine_basic_position
 
 # optimat_input  is an input to LinuxCNC / MESA from the router
 # 7i77 board
-alias pin hm2_5i25.0.7i77.0.0.input-01 optimat_i_motor_cb
+alias pin hm2_5i25.0.7i77.0.0.input-01-not optimat_i_motor_cb
 alias pin hm2_5i25.0.7i77.0.0.input-02 optimat_i_compressed_air
+alias pin hm2_5i25.0.7i77.0.0.input-02-not  optimat_i_compressed_air_down
 alias pin hm2_5i25.0.7i77.0.0.input-03 optimat_i_vacuum
 alias pin hm2_5i25.0.7i77.0.0.input-04 optimat_i_run_signal
 alias pin hm2_5i25.0.7i77.0.0.input-05 optimat_i_coolant_flow
@@ -182,25 +183,29 @@ net coolant-mist optimat_o_mist_coolant <= and2.0.out
 
 # for GladeVCP
 net air_up <= optimat_i_compressed_air
+net air_down <= optimat_i_compressed_air_down
 # net router_1_down <= optimat_i_router_1_on_bottom
-net router_1_down <= optimat_i_motor_cb
+# net router_1_down <= optimat_i_motor_cb
 net vacuum_up <= optimat_i_vacuum
+
+# for gmoccapy messages
+net cb_trip <= optimat_i_motor_cb
 
 
 # net tool-release => optimat_o_router_1_clamping
 # net tool-release <= optimat_i_tool_change_button
 
 # stacklight on HMI
-# net machine-is-enabled        => hmi_o_stacklight_orange
-net home_x                    => hmi_o_stacklight_red
+# red stacklight is tied to gmoccapy.error 
+
+net stacklight-orange        <= halui.program.is-paused
+net stacklight-orange        => hmi_o_stacklight_orange
+net stacklight-orange        => hmi_o_panel_feed_hold_led
 
 net stacklight-green          <= halui.program.is-running
 net stacklight-green          => hmi_o_stacklight_green
 net stacklight-green          => hmi_o_panel_cycle_start_led
 
-net stacklight-orange        <= halui.program.is-paused
-net stacklight-orange        => hmi_o_stacklight_orange
-net stacklight-orange        => hmi_o_panel_feed_hold_led
 
 
 # feed rate override (calculation done elsewhere, apparently)

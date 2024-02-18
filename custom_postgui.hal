@@ -1,2 +1,8 @@
 # Include your custom_postgui HAL commands here
 # This file will not be overwritten when you run PNCconf again
+net stacklight-red           <= gmoccapy.error
+net stacklight-red           => hmi_o_stacklight_red
+
+net air_down => gmoccapy.messages.air-down
+net cb_trip  => gmoccapy.messages.cb-trip
+
