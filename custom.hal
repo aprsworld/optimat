@@ -111,10 +111,10 @@ alias pin hm2_5i25.0.7i76.0.3.input-12 optimat_i_tool_magazine_position_bit_4
 # alias pin hm2_5i25.0.7i76.0.3.input-13 # unused
 # alias pin hm2_5i25.0.7i76.0.3.input-14 # unused
 # alias pin hm2_5i25.0.7i76.0.3.input-15 # unused
-# alias pin hm2_5i25.0.7i76.0.3.input-16 # unused
-# alias pin hm2_5i25.0.7i76.0.3.input-17 # unused
-# alias pin hm2_5i25.0.7i76.0.3.input-18 # unused
-# alias pin hm2_5i25.0.7i76.0.3.input-19 # unused
+# alias pin hm2_5i25.0.7i76.0.3.input-16 # unused (can be encoder in MODE 2)
+# alias pin hm2_5i25.0.7i76.0.3.input-17 # unused (can be encoder in MODE 2)
+# alias pin hm2_5i25.0.7i76.0.3.input-18 # unused (can be encoder in MODE 2)
+# alias pin hm2_5i25.0.7i76.0.3.input-19 # unused (can be encoder in MODE 2)
 # alias pin hm2_5i25.0.7i76.0.3.input-20 # unused
 # alias pin hm2_5i25.0.7i76.0.3.input-21 # unused
 # alias pin hm2_5i25.0.7i76.0.3.input-22 # unused
@@ -217,10 +217,10 @@ net pause-signal  <= hmi_i_panel_feed_hold_button
 net pause-signal  => halui.program.pause
 
 # --- JOINT-SELECT ---
-net joint-select-a     <=  hmi_i_pendant_jog_axis_x
-net joint-select-b     <=  hmi_i_pendant_jog_axis_y
-net joint-select-c     <=  hmi_i_pendant_jog_axis_z
-net joint-select-d     <=  hmi_i_pendant_jog_axis_4
+# net joint-select-a     <=  hmi_i_pendant_jog_axis_x
+# net joint-select-b     <=  hmi_i_pendant_jog_axis_y
+# net joint-select-c     <=  hmi_i_pendant_jog_axis_z
+# net joint-select-d     <=  hmi_i_pendant_jog_axis_4
 
 # spindle control
 # for now we will just keep the contactor to router_1 on
@@ -349,3 +349,59 @@ addf toggle.0 servo-thread
 net toggle-stoppers-right-pedal optimat_i_foot_switch_right => toggle.1.in
 net toggle-stoppers-right toggle.1.out => optimat_o_stopper_right
 addf toggle.1 servo-thread
+
+# jog pendant
+#ENABLE loadrt encoder num_chan=1
+loadrt mux4 count=1
+
+#ENABLE addf encoder.capture-position servo-thread
+#ENABLE addf encoder.update-counters base-thread
+addf mux4.0 servo-thread
+
+# If your MPG outputs a quadrature signal per click set x4 to 1
+# If your MPG puts out 1 pulse per click set x4 to 0
+#ENABLE setp encoder.0.x4-mode 0
+
+# For velocity mode, set to 1
+# In velocity mode the axis stops when the dial is stopped
+# even if that means the commanded motion is not completed,
+# For position mode (the default), set to 0
+# In position mode the axis will move exactly jog-scale
+# units for each count, regardless of how long that might take,
+setp axis.x.jog-vel-mode 0
+setp axis.y.jog-vel-mode 0
+setp axis.z.jog-vel-mode 0
+
+# This sets the scale that will be used based on the input to the mux4
+setp mux4.0.in0 0.00025 # encoder outputs 4x counts, so this equals 0.001
+setp mux4.0.in1 0.00250 # encoder outputs 4x counts, so this equals 0.010
+setp mux4.0.in2 0.02500 # encoder outputs 4x counts, so this equals 0.100
+
+
+# The inputs to the mux4 component
+# x1 input really not needed. If not x10 and not x100 then it must be x1
+net scale1 mux4.0.sel0 <= hmi_i_pendant_jog_x10
+net scale2 mux4.0.sel1 <= hmi_i_pendant_jog_x100
+
+# The output from the mux4 is sent to each axis jog scale
+net mpg-scale <= mux4.0.out
+net mpg-scale => axis.x.jog-scale
+net mpg-scale => axis.y.jog-scale
+net mpg-scale => axis.z.jog-scale
+
+# The Axis select inputs
+net mpg-x axis.x.jog-enable <= hmi_i_pendant_jog_axis_x
+net mpg-y axis.y.jog-enable <= hmi_i_pendant_jog_axis_y
+net mpg-z axis.z.jog-enable <= hmi_i_pendant_jog_axis_z
+net mpg-a axis.a.jog-enable <= hmi_i_pendant_jog_axis_4
+
+# using the spindle encoder on the 7i76 card we need to specify 7 encoders when doing hostmot
+# loadrt hm2_pci config="num_encoders=7
+# because using the spindle encoder, it outputs 4x counts per click on hand wheel. Increments
+# are scaled by 4x above.
+# The encoder output counts to the axis. Only the selected axis will move.
+net encoder-counts  <= hm2_5i25.0.encoder.06.count
+net encoder-counts => axis.x.jog-count
+net encoder-counts => axis.y.jog-counts
+net encoder-counts => axis.z.jog-counts
+net encoder-counts => axis.a.jog-counts

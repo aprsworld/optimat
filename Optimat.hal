@@ -6,13 +6,14 @@
 loadrt [KINS]KINEMATICS
 loadrt [EMCMOT]EMCMOT servo_period_nsec=[EMCMOT]SERVO_PERIOD num_joints=[KINS]JOINTS num_dio=32
 loadrt hostmot2
-loadrt hm2_pci config="num_encoders=6 num_pwmgens=0 num_stepgens=0 sserial_port_0=00000x" 
+loadrt hm2_pci config="num_encoders=7 num_pwmgens=0 num_stepgens=0 sserial_port_0=00000x" 
 setp    hm2_5i25.0.watchdog.timeout_ns 5000000
 loadrt pid names=pid.x,pid.y,pid.z,pid.a,pid.s
 loadrt abs names=abs.spindle
 loadrt lowpass names=lowpass.spindle
 loadrt classicladder_rt numPhysInputs=15 numPhysOutputs=15 numS32in=10 numS32out=10 numFloatIn=10 numFloatOut=10 numBits=50 numWords=50
-loadrt mux16 names=jogincr,foincr
+# loadrt mux16 names=jogincr,foincr
+loadrt mux16 names=foincr
 
 addf hm2_5i25.0.read          servo-thread
 addf motion-command-handler   servo-thread
@@ -23,7 +24,7 @@ addf pid.z.do-pid-calcs       servo-thread
 addf pid.a.do-pid-calcs       servo-thread
 addf pid.s.do-pid-calcs       servo-thread
 addf classicladder.0.refresh servo-thread
-addf jogincr                  servo-thread
+# addf jogincr                  servo-thread
 addf foincr                   servo-thread
 addf abs.spindle              servo-thread
 addf lowpass.spindle          servo-thread
@@ -359,57 +360,58 @@ net probe-in     =>  motion.probe-input
 net axis-selected-count     <=  hm2_5i25.0.encoder.05.count
 
 #  ---mpg signals---
-
+# handled in custom.hal
+#
 #       for axis x MPG
-setp    axis.x.jog-vel-mode 0
-net selected-jog-incr    =>  axis.x.jog-scale
-net axis-select-x       =>  axis.x.jog-enable
-net axis-selected-count =>  axis.x.jog-counts
+# setp    axis.x.jog-vel-mode 0
+# net selected-jog-incr    =>  axis.x.jog-scale
+# net axis-select-x       =>  axis.x.jog-enable
+# net axis-selected-count =>  axis.x.jog-counts
 
 #       for axis y MPG
-setp    axis.y.jog-vel-mode 0
-net selected-jog-incr    =>  axis.y.jog-scale
-net axis-select-y       =>  axis.y.jog-enable
-net axis-selected-count =>  axis.y.jog-counts
+# setp    axis.y.jog-vel-mode 0
+# net selected-jog-incr    =>  axis.y.jog-scale
+# net axis-select-y       =>  axis.y.jog-enable
+# net axis-selected-count =>  axis.y.jog-counts
 
 #       for axis z MPG
-setp    axis.z.jog-vel-mode 0
-net selected-jog-incr    =>  axis.z.jog-scale
-net axis-select-z       =>  axis.z.jog-enable
-net axis-selected-count =>  axis.z.jog-counts
+# setp    axis.z.jog-vel-mode 0
+# net selected-jog-incr    =>  axis.z.jog-scale
+# net axis-select-z       =>  axis.z.jog-enable
+# net axis-selected-count =>  axis.z.jog-counts
 
 #       for axis a MPG
-setp    axis.a.jog-vel-mode 0
-net selected-jog-incr    =>  axis.a.jog-scale
-net axis-select-a       =>  axis.a.jog-enable
-net axis-selected-count =>  axis.a.jog-counts
+# setp    axis.a.jog-vel-mode 0
+# net selected-jog-incr    =>  axis.a.jog-scale
+# net axis-select-a       =>  axis.a.jog-enable
+# net axis-selected-count =>  axis.a.jog-counts
 
 # connect selectable mpg jog increments 
 
-net jog-incr-a           =>  jogincr.sel0
-net jog-incr-b           =>  jogincr.sel1
-net jog-incr-c           =>  jogincr.sel2
-net jog-incr-d           =>  jogincr.sel3
-net selected-jog-incr    <=  jogincr.out-f
-    setp jogincr.debounce-time      0.200000
-    setp jogincr.use-graycode      False
-    setp jogincr.suppress-no-input False
-    setp jogincr.in00          0.000000
-    setp jogincr.in01          0.000100
-    setp jogincr.in02          0.001000
-    setp jogincr.in03          0.001000
-    setp jogincr.in04          0.010000
-    setp jogincr.in05          0.010000
-    setp jogincr.in06          0.050000
-    setp jogincr.in07          0.100000
-    setp jogincr.in08          0.125000
-    setp jogincr.in09          0.125000
-    setp jogincr.in10          0.125000
-    setp jogincr.in11          0.125000
-    setp jogincr.in12          0.125000
-    setp jogincr.in13          0.125000
-    setp jogincr.in14          0.125000
-    setp jogincr.in15          0.125000
+# net jog-incr-a           =>  jogincr.sel0
+# net jog-incr-b           =>  jogincr.sel1
+# net jog-incr-c           =>  jogincr.sel2
+# net jog-incr-d           =>  jogincr.sel3
+# net selected-jog-incr    <=  jogincr.out-f
+#    setp jogincr.debounce-time      0.200000
+#    setp jogincr.use-graycode      False
+#    setp jogincr.suppress-no-input False
+#    setp jogincr.in00          0.000000
+#    setp jogincr.in01          0.000100
+#    setp jogincr.in02          0.001000
+#    setp jogincr.in03          0.001000
+#    setp jogincr.in04          0.010000
+#    setp jogincr.in05          0.010000
+#    setp jogincr.in06          0.050000
+#    setp jogincr.in07          0.100000
+#    setp jogincr.in08          0.125000
+#    setp jogincr.in09          0.125000
+#    setp jogincr.in10          0.125000
+#    setp jogincr.in11          0.125000
+#    setp jogincr.in12          0.125000
+#    setp jogincr.in13          0.125000
+#    setp jogincr.in14          0.125000
+#    setp jogincr.in15          0.125000
 
 # connect feed overide increments - switches
 
