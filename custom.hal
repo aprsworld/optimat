@@ -401,7 +401,7 @@ net mpg-a axis.a.jog-enable <= hmi_i_pendant_jog_axis_4
 # are scaled by 4x above.
 # The encoder output counts to the axis. Only the selected axis will move.
 net encoder-counts  <= hm2_5i25.0.encoder.06.count
-net encoder-counts => axis.x.jog-count
+net encoder-counts => axis.x.jog-counts
 net encoder-counts => axis.y.jog-counts
 net encoder-counts => axis.z.jog-counts
 net encoder-counts => axis.a.jog-counts
