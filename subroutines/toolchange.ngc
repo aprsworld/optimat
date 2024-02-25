@@ -100,8 +100,8 @@ O10 IF [#<selected_tool> LE 6]
 	; bring plate up
 	M65 P0 ; turn off magazine down
 	M64 P1 ; turn on magazine up
-	; wait until tool magazine on top is high or 5 seconds
-	M66 P7 L3 Q5
+	; wait until tool magazine on top is high or 15 seconds
+	M66 P7 L3 Q15
 	O134 if [#5399 LT 0]
 		(abort, failed to get magazine up)
 	O134 endif
