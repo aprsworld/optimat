@@ -141,7 +141,7 @@ alias pin hm2_5i25.0.7i66.0.4.output-05 hmi_o_stacklight_green
 # alias pin hm2_5i25.0.7i66.0.4.output-07 hmi_o_
 
 # hmi_input is an input to LinuxCNC / MESA from the HMI / pendant
-alias pin hm2_5i25.0.7i66.0.4.input-00 hmi_i_pendant_jog_x1
+alias pin hm2_5i25.0.7i66.0.4.input-00 hmi_i_panel_ro_a # was hmi_i_pendant_jog_x1
 alias pin hm2_5i25.0.7i66.0.4.input-01 hmi_i_pendant_jog_x10
 alias pin hm2_5i25.0.7i66.0.4.input-02 hmi_i_pendant_jog_x100
 alias pin hm2_5i25.0.7i66.0.4.input-03 hmi_i_pendant_jog_axis_x
@@ -150,13 +150,13 @@ alias pin hm2_5i25.0.7i66.0.4.input-05 hmi_i_pendant_jog_axis_z
 alias pin hm2_5i25.0.7i66.0.4.input-06 hmi_i_pendant_jog_axis_4
 alias pin hm2_5i25.0.7i66.0.4.input-07 hmi_i_panel_feed_hold_button
 alias pin hm2_5i25.0.7i66.0.4.input-08 hmi_i_panel_cycle_start_button
-alias pin hm2_5i25.0.7i66.0.4.input-09 hmi_i_panel_fro_a
-alias pin hm2_5i25.0.7i66.0.4.input-10 hmi_i_panel_fro_b
-alias pin hm2_5i25.0.7i66.0.4.input-11 hmi_i_panel_fro_e
-alias pin hm2_5i25.0.7i66.0.4.input-12 hmi_i_panel_fro_f
-# alias pin hm2_5i25.0.7i66.0.4.input-13 hmi_i_
-# alias pin hm2_5i25.0.7i66.0.4.input-14 hmi_i_
-# alias pin hm2_5i25.0.7i66.0.4.input-15 hmi_i_ # spindle override analog signal
+alias pin hm2_5i25.0.7i66.0.4.input-09 hmi_i_panel_fo_a
+alias pin hm2_5i25.0.7i66.0.4.input-10 hmi_i_panel_fo_b
+alias pin hm2_5i25.0.7i66.0.4.input-11 hmi_i_panel_fo_e
+alias pin hm2_5i25.0.7i66.0.4.input-12 hmi_i_panel_fo_f
+alias pin hm2_5i25.0.7i66.0.4.input-13 hmi_i_panel_ro_b
+alias pin hm2_5i25.0.7i66.0.4.input-14 hmi_i_panel_ro_e
+alias pin hm2_5i25.0.7i66.0.4.input-15 hmi_i_panel_ro_f
 
 
 
@@ -209,10 +209,16 @@ net stacklight-green          => hmi_o_panel_cycle_start_led
 
 
 # feed rate override (calculation done elsewhere, apparently)
-net fo-incr-a     <=  hmi_i_panel_fro_a 
-net fo-incr-b     <=  hmi_i_panel_fro_b 
-net fo-incr-c     <=  hmi_i_panel_fro_e 
-net fo-incr-d     <=  hmi_i_panel_fro_f 
+net fo-incr-a     <=  hmi_i_panel_fo_a 
+net fo-incr-b     <=  hmi_i_panel_fo_b 
+net fo-incr-c     <=  hmi_i_panel_fo_e 
+net fo-incr-d     <=  hmi_i_panel_fo_f 
+
+# rapid override 
+net ro-incr-a     <=  hmi_i_panel_ro_a 
+net ro-incr-b     <=  hmi_i_panel_ro_b 
+net ro-incr-c     <=  hmi_i_panel_ro_e 
+net ro-incr-d     <=  hmi_i_panel_ro_f 
 
 # program controls
 net run-signal    <= hmi_i_panel_cycle_start_button
