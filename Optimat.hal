@@ -415,7 +415,7 @@ net axis-selected-count     <=  hm2_5i25.0.encoder.05.count
 
 # connect feed overide increments - switches
 
-    setp halui.feed-override.count-enable true
+#    setp halui.feed-override.count-enable true
     setp halui.feed-override.direct-value true
     setp halui.feed-override.scale .01
 net feedoverride-incr   =>  halui.feed-override.counts
@@ -446,7 +446,7 @@ net feedoverride-incr   <=  foincr.out-s
 
 # connect rapid overide increments - switches
 
-    setp halui.rapid-override.count-enable true
+#    setp halui.rapid-override.count-enable true
     setp halui.rapid-override.direct-value true
     setp halui.rapid-override.scale .01
 net rapidoverride-incr   =>  halui.rapid-override.counts

@@ -6,3 +6,7 @@ net stacklight-red           => hmi_o_stacklight_red
 net air_down => gmoccapy.messages.air-down
 net cb_trip  => gmoccapy.messages.cb-trip
 
+#setp gmoccapy.feed-override.count-enable true
+#setp gmoccapy.rapid-override.count-enable true
+
+
