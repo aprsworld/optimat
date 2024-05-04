@@ -7,11 +7,12 @@
 
 # Loadrt goes here so we can find them to increase counts as needed
 loadrt xor2 count=1
-loadrt and2 count=2
+loadrt and2 count=3
 loadrt carousel pockets=6 encoding=binary num_sense=3 dir=2
 loadrt conv_float_s32 
 loadrt toggle count=3
 loadrt mux4 count=1
+loadrt not count=1
 
 # alias hardware pin names to descriptive names
 
@@ -366,23 +367,30 @@ net toggle-stoppers-right-pedal optimat_i_foot_switch_right => toggle.1.in
 net toggle-stoppers-right toggle.1.out => optimat_o_stopper_right
 addf toggle.1 servo-thread
 
-# -20S1 button on tool changer to drop carosel down if we are in manual mode
+# -20S1 button on tool changer to drop/raise carosel using the one-shot halui.mdi-commands
 
-net toggle-magazine-down-button optimat_i_tool_change_button => toggle.2.in
-#net toggle-magazine-down toggle.2.out => hmi_o_pendant_led
-net toggle-magazine-down toggle.2.out
+# net manual-magazine-down optimat_i_tool_change_button => halui.mdi-command-00 # lower tool change magazine on button press
+# net manual-magazine-up optimat_i_tool_change_button   => halui.mdi-command-01 # raise  tool change magazine on button press
 
-# connect toggled button to and2.1 first input
-net toggle-magazine-down => and2.1.in0
-# connect halui.mode.is-manual to and2.1 second input
-net fuck halui.mode.is-manual => and2.1.in1
+net toggle-magazine-button optimat_i_tool_change_button => toggle.2.in
+net toggle-magazine-state <= toggle.2.out 
 
-net manual-magazie-down and2.1.out => hmi_o_pendant_led
+# MDI command 0 should be triggered when !TOGGLE AND BUTTON
+net toggle-magazine-state => not.0.in
+net toggle-magazine-state-not <= not.0.out
+net toggle-magazine-state-not => and2.1.in0
+net toggle-magazine-button => and2.1.in1
+net mdi-magazine-down and2.1.out => halui.mdi-command-00
 
-#net coolant-mist-and2-in1 and2.0.in1 <= xor2.0.out
-#net coolant-mist optimat_o_mist_coolant <= and2.0.out
+net toggle-magazine-state => and2.2.in0
+net toggle-magazine-button => and2.2.in1
+net mdi-magazine-up and2.2.out => halui.mdi-command-01
+
+
 addf toggle.2 servo-thread
+addf not.0 servo-thread
 addf and2.1 servo-thread
+addf and2.2 servo-thread
 
 # jog pendant
 
