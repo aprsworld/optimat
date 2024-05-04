@@ -1,0 +1,10 @@
+o<magazineup> sub
+; save modal state and auto-restore upon leaving this sub-routine
+M73
+
+; turn off magazine down
+M65 P0
+; turn on magazine up
+M64 P1
+o<magazineup> endsub
+M2
