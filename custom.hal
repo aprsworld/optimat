@@ -382,6 +382,7 @@ net toggle-magazine-state-not => and2.1.in0
 net toggle-magazine-button => and2.1.in1
 net mdi-magazine-down and2.1.out => halui.mdi-command-00
 
+# MDI command 1 should be trigged when TOGGLE AND BUTTON
 net toggle-magazine-state => and2.2.in0
 net toggle-magazine-button => and2.2.in1
 net mdi-magazine-up and2.2.out => halui.mdi-command-01
