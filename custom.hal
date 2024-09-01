@@ -13,6 +13,7 @@ loadrt conv_float_s32
 loadrt toggle count=3
 loadrt mux4 count=1
 loadrt not count=1
+# loadrt pwmgen output_type=0
 
 # alias hardware pin names to descriptive names
 
@@ -28,7 +29,7 @@ alias pin hm2_5i25.0.7i77.0.0.output-06 optimat_o_stopper_right
 alias pin hm2_5i25.0.7i77.0.0.output-07 optimat_o_stopper_left
 alias pin hm2_5i25.0.7i77.0.0.output-08 optimat_o_motor_drilling_unit
 alias pin hm2_5i25.0.7i77.0.0.output-09 optimat_o_horizontal_y_spindle_1_down # needs units_up to retract
-alias pin hm2_5i25.0.7i77.0.0.output-10 optimat_o_horizontal_x_spindle_1_down # needs units_up to retract and outer most (east) ... mount laser engraver here?
+alias pin hm2_5i25.0.7i77.0.0.output-10 optimat_o_horizontal_x_spindle_1_down # needs units_up to retract and outer most (east) 
 alias pin hm2_5i25.0.7i77.0.0.output-11 optimat_o_horizontal_x_spindle_2_down # needs units_up to retract
 
 alias pin hm2_5i25.0.7i76.0.3.output-00 optimat_o_groove_saw_down # does not need units_up
@@ -43,6 +44,10 @@ alias pin hm2_5i25.0.7i76.0.3.output-08 optimat_o_spindle_5
 alias pin hm2_5i25.0.7i76.0.3.output-09 optimat_o_spindle_6
 alias pin hm2_5i25.0.7i76.0.3.output-10 optimat_o_spindle_7 # leaks!
 alias pin hm2_5i25.0.7i76.0.3.output-11 optimat_o_spindle_8
+# alias pin hm2_5i25.0.7i76.0.3.output-12 optimat_o_
+# alias pin hm2_5i25.0.7i76.0.3.output-13 optimat_o_
+# alias pin hm2_5i25.0.7i76.0.3.output-14 optimat_o_
+alias pin hm2_5i25.0.7i76.0.3.output-15 optimat_o_laser_engraver_pwm
 
 alias pin hm2_5i25.0.7i66.0.2.output-00 optimat_o_spindle_9
 alias pin hm2_5i25.0.7i66.0.2.output-01 optimat_o_spindle_10 # sticky
@@ -342,7 +347,7 @@ net tool-change-spindle-9-down      optimat_o_spindle_9                       =>
 net tool-change-spindle-10-down     optimat_o_spindle_10                      => motion.digital-out-18
 net tool-change-spindle-11-down     optimat_o_spindle_11                      => motion.digital-out-19
 net tool-change-laser-crosshair     optimat_o_laser_crosshair                 => motion.digital-out-20
-# net tool-change-laser-engraver      optimat_o_laser_engraver                  => motion.digital-out-21
+net tool-change-laser-engraver      optimat_o_laser_engraver_pwm              => motion.digital-out-21
 net tool-change-horiz-y-1           optimat_o_horizontal_y_spindle_1_down     => motion.digital-out-22
 net tool-change-horiz-x-1           optimat_o_horizontal_x_spindle_1_down     => motion.digital-out-23
 net tool-change-horiz-x-2           optimat_o_horizontal_x_spindle_2_down     => motion.digital-out-24
@@ -440,3 +445,12 @@ net encoder-counts => axis.x.jog-counts
 net encoder-counts => axis.y.jog-counts
 net encoder-counts => axis.z.jog-counts
 net encoder-counts => axis.a.jog-counts
+
+# second spindle is laser engraver PWM
+# addf pwmgen.update servo-thread
+# addf pwmgen.make-pulses servo-thread
+# net laser-speed-cmd spindle.1.speed-out => pwmgen.0.value
+# net laser-on spindle.1.on => pwmgen.0.enable # this should be P21 enable AND spindle.1.on 
+# net laser-pwm pwmgen.0.pwm => optimat_o_laser_engraver_pwm
+# Set the spindle's top speed in RPM
+# setp pwmgen.0.scale 100

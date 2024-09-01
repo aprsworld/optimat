@@ -4,8 +4,10 @@ M73
 
 M198 P3 Q#<selected_tool> ; log our tool change
 
-; shut off spindles in case somebody was stupid!
-M5
+; shut off all spindles in case somebody was stupid!
+M5 $-1
+; shut off laser engraver PWM
+M65 P21
 ; wait for spindle standstill
 M66 P3 L3 Q4
 O2 if [#5399 LT 0]
@@ -24,6 +26,17 @@ O5 IF [#<tool_in_spindle> LE 6]
 	M64 P6	
 O05 ELSEIF [#<tool_in_spindle> EQ 7]
 	M65 P20 ; shut off laser crosshair
+O05 ELSEIF [#<tool_in_spindle> EQ 8]
+	; turn off laser engraver
+	M65 P21
+	; laser engraver is mounted on groove saw
+	; units up
+	M64 P6
+	; retract groove saw spindle
+	M65 P8
+	; give it 2 seconds to do its thing
+	G4 P2.0
+
 O05 ELSE 
 	; units up
 	M64 P6
@@ -199,7 +212,10 @@ O10 IF [#<selected_tool> LE 6]
 
 O10 ELSEIF [#<selected_tool> EQ 7]
 	M64 P20 ; turn on laser crosshair
-
+O10 ELSEIF [#<selected_tool> EQ 8]
+	M64 P8 ; extend the grooving saw spindle the laser engraver is mounted on
+	; the laser engraver itself is turned on with a M64 P21
+	; the laser engraver itself is turned off with a M65 P21
 O10 ELSEIF [#<selected_tool> GE 16]
 	; drill bank
 

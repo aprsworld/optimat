@@ -3,7 +3,7 @@
 # overwritten when you run PNCconf again
 
 loadrt [KINS]KINEMATICS
-loadrt [EMCMOT]EMCMOT servo_period_nsec=[EMCMOT]SERVO_PERIOD num_joints=[KINS]JOINTS num_dio=32
+loadrt [EMCMOT]EMCMOT servo_period_nsec=[EMCMOT]SERVO_PERIOD num_joints=[KINS]JOINTS num_spindles=2 num_dio=32
 loadrt hostmot2
 loadrt hm2_pci config="num_encoders=7 num_pwmgens=0 num_stepgens=0 sserial_port_0=00000x" 
 setp    hm2_5i25.0.watchdog.timeout_ns 5000000
@@ -13,6 +13,7 @@ loadrt lowpass names=lowpass.spindle
 loadrt classicladder_rt numPhysInputs=15 numPhysOutputs=15 numS32in=10 numS32out=10 numFloatIn=10 numFloatOut=10 numBits=50 numWords=50
 # loadrt mux16 names=jogincr,foincr
 loadrt mux16 names=foincr,roincr
+
 
 addf hm2_5i25.0.read          servo-thread
 addf motion-command-handler   servo-thread
