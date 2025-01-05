@@ -7,14 +7,14 @@
 
 # Loadrt goes here so we can find them to increase counts as needed
 loadrt xor2 count=1
-loadrt and2 count=4
+loadrt and2 count=5
 loadrt carousel pockets=6 encoding=binary num_sense=3 dir=2
 loadrt conv_float_s32 
 loadrt toggle count=3
 loadrt mux4 count=1
 loadrt not count=1
-loadrt comp count=1
-# loadrt pwmgen output_type=0
+loadrt comp count=2
+loadrt conv_u32_float count=1
 
 # alias hardware pin names to descriptive names
 
@@ -208,14 +208,31 @@ net cb_trip <= optimat_i_motor_cb
 # inhibit laser engraver when at unsafe height (relative) 
 addf comp.0 servo-thread
 setp comp.0.in1  0.375          # okay to have engraver on below this (relative) z height
-setp comp.0.hyst 0.050          # hysteresis
+setp comp.0.hyst 0.005          # hysteresis
 net engraver-height-current     comp.0.in0        <= halui.axis.z.pos-relative
 
 # engraver tool (T8) must be the active tool and height must be safe
+addf conv-u32-float.0 servo-thread
+net tool_number_u32   <= halui.tool.number => conv-u32-float.0.in
+net tool_number_float <= conv-u32-float.0.out 
+
+addf comp.1 servo-thread
+setp comp.1.in0  8             # engraver tool number
+setp comp.1.hyst 0.0001        # floating point is never equal
+net  tool_number_float => comp.1.in1
+
 addf and2.3 servo-thread
 net engrave-safe-height <= comp.0.out => and2.3.in0
-net engrave-commanded <= motion.digital-out-21 => and2.3.in1
-net engrave-on optimat_o_laser_engraver_pwm <= and2.3.out
+net engrave-safe-selected <= motion.digital-out-21 => and2.3.in1
+# net engrave-signal <= optimat_o_laser_engraver_pwm => and2.3.out
+net engrave-signal <= and2.3.out
+
+# make sure comp.1.equal and engrave_signal are both true, if so we turn on optimat_o_laser_engraver_pwm
+addf and2.4 servo-thread
+net engrave-signal => and2.4.in0
+net engrave-tool-match => comp.1.equal => and2.4.in1
+net engrave_pwm <= optimat_o_laser_engraver_pwm <= and2.4.out
+
 
 
 
