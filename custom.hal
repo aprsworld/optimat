@@ -7,12 +7,13 @@
 
 # Loadrt goes here so we can find them to increase counts as needed
 loadrt xor2 count=1
-loadrt and2 count=3
+loadrt and2 count=4
 loadrt carousel pockets=6 encoding=binary num_sense=3 dir=2
 loadrt conv_float_s32 
 loadrt toggle count=3
 loadrt mux4 count=1
 loadrt not count=1
+loadrt comp count=1
 # loadrt pwmgen output_type=0
 
 # alias hardware pin names to descriptive names
@@ -204,6 +205,21 @@ net vacuum_up <= optimat_i_vacuum
 net cb_trip <= optimat_i_motor_cb
 
 
+# inhibit laser engraver when at unsafe height (relative) 
+addf comp.0 servo-thread
+setp comp.0.in1  0.375          # okay to have engraver on below this (relative) z height
+setp comp.0.hyst 0.050          # hysteresis
+net engraver-height-current     comp.0.in0        <= halui.axis.z.pos-relative
+
+# engraver tool (T8) must be the active tool and height must be safe
+addf and2.3 servo-thread
+net engrave-safe-height <= comp.0.out => and2.3.in0
+net engrave-commanded <= motion.digital-out-21 => and2.3.in1
+net engrave-on optimat_o_laser_engraver_pwm <= and2.3.out
+
+
+
+
 # net tool-release => optimat_o_router_1_clamping
 # net tool-release <= optimat_i_tool_change_button
 
@@ -260,28 +276,9 @@ net spindle-ccw spindle.0.reverse => optimat_o_keb_rotation_reverse
 # this should inhibit feed moves until the spindle has reached speed
 net spindle-at-speed <= optimat_i_router_nominal_speed
 
-# examples
-# --- FORCE-PIN-TRUE ---
-#setp hm2_5i25.0.7i77.0.0.output-00 true
-# external input signals
-# --- ESTOP-EXT ---
-#net estop-ext     <=  hm2_5i25.0.7i77.0.0.input-00
-# --- SPINDLE-AT-SPEED ---
-#net spindle-at-speed     <=  hm2_5i25.0.7i77.0.0.input-25
-
-# --- HOME-X ---
-# net home-x     <=  hm2_5i25.0.7i77.0.0.input-26
-
-# --- HOME-Y ---
-# net home-y     <=  hm2_5i25.0.7i77.0.0.input-27
-
-# --- HOME-Z ---
-# net home-z     <=  hm2_5i25.0.7i77.0.0.input-28
-
 
 
 # tool changer carousel
-
 net carousel-strobe optimat_i_tool_magazine_counter_pulse => carousel.0.strobe
 net carousel-bit-1 optimat_i_tool_magazine_position_bit_1 => carousel.0.sense-0
 net carousel-bit-2 optimat_i_tool_magazine_position_bit_2 => carousel.0.sense-1
@@ -329,7 +326,7 @@ net tool-change-mag-up              optimat_o_tool_magazine_up                =>
 net tool-change-mag-changing        optimat_o_tool_magazine_changing_position => motion.digital-out-02
 net tool-change-mag-basic           optimat_o_tool_magazine_basic_position    => motion.digital-out-03
 # net tool-change-release             optimat_o_router_1_clamping               => motion.digital-out-04
-net optimat_s_router_1_clamping => motion.digital-out-04
+net optimat_s_router_1_clamping                                               => motion.digital-out-04
 net tool-change-router-down         optimat_o_router_1_down                   => motion.digital-out-05
 net tool-change-units-up            optimat_o_units_up                        => motion.digital-out-06
 net tool-change-carousel-enable     carousel.0.enable                         => motion.digital-out-07
@@ -347,7 +344,8 @@ net tool-change-spindle-9-down      optimat_o_spindle_9                       =>
 net tool-change-spindle-10-down     optimat_o_spindle_10                      => motion.digital-out-18
 net tool-change-spindle-11-down     optimat_o_spindle_11                      => motion.digital-out-19
 net tool-change-laser-crosshair     optimat_o_laser_crosshair                 => motion.digital-out-20
-net tool-change-laser-engraver      optimat_o_laser_engraver_pwm              => motion.digital-out-21
+# out 21 connected in the laser engraver safe section
+# net tool-change-laser-engraver      optimat_o_laser_engraver_pwm              => motion.digital-out-21 # this should go into and and that compares it with halui.axis.z.pos-relative
 net tool-change-horiz-y-1           optimat_o_horizontal_y_spindle_1_down     => motion.digital-out-22
 net tool-change-horiz-x-1           optimat_o_horizontal_x_spindle_1_down     => motion.digital-out-23
 net tool-change-horiz-x-2           optimat_o_horizontal_x_spindle_2_down     => motion.digital-out-24
@@ -356,6 +354,8 @@ net tool-change-motor-drilling      optimat_o_motor_drilling_unit             =>
 net tool-change-motor-keb-param-1   optimat_o_keb_parameter_set_1             => motion.digital-out-27
 net tool-change-motor-keb-param-2   optimat_o_keb_parameter_set_2             => motion.digital-out-28
 net tool-change-motor-keb-param-4   optimat_o_keb_parameter_set_4             => motion.digital-out-29
+net lube-forced-on                  optimat_o_forced_lubrication_on           => motion.digital-out-30 # meter spring pushed grease for 10 seconds
+net lube-air-on                     optimat_o_forced_lubrication_air          => motion.digital-out-31 # blows what is in the tube
 
 
 
@@ -373,9 +373,6 @@ net toggle-stoppers-right toggle.1.out => optimat_o_stopper_right
 addf toggle.1 servo-thread
 
 # -20S1 button on tool changer to drop/raise carosel using the one-shot halui.mdi-commands
-
-# net manual-magazine-down optimat_i_tool_change_button => halui.mdi-command-00 # lower tool change magazine on button press
-# net manual-magazine-up optimat_i_tool_change_button   => halui.mdi-command-01 # raise  tool change magazine on button press
 
 net toggle-magazine-button optimat_i_tool_change_button => toggle.2.in
 net toggle-magazine-state <= toggle.2.out 
@@ -454,3 +451,5 @@ net encoder-counts => axis.a.jog-counts
 # net laser-pwm pwmgen.0.pwm => optimat_o_laser_engraver_pwm
 # Set the spindle's top speed in RPM
 # setp pwmgen.0.scale 100
+
+
