@@ -224,7 +224,6 @@ net  tool_number_float => comp.1.in1
 addf and2.3 servo-thread
 net engrave-safe-height <= comp.0.out => and2.3.in0
 net engrave-safe-selected <= motion.digital-out-21 => and2.3.in1
-# net engrave-signal <= optimat_o_laser_engraver_pwm => and2.3.out
 net engrave-signal <= and2.3.out
 
 # make sure comp.1.equal and engrave_signal are both true, if so we turn on optimat_o_laser_engraver_pwm
