@@ -158,7 +158,7 @@ O10 IF [#<selected_tool> LE 6]
 	; wait until not active or 10 seconds
 	M66 P11 L4 Q10
 	O166 if [#5399 LT 0]
-		(abort, carousel never finished being active)
+		(abort, carousel never finished being active. check -22B1)
 	O166 endif
 	; turn off enable
 	M65 P7
