@@ -233,7 +233,7 @@ net cb_trip <= optimat_i_motor_cb
 # net engrave_pwm <= optimat_o_laser_engraver_pwm <= and2.4.out
 
 # disable safe
-net engrave_pwm <= optimat_o_laser_engraver_pwm 
+# net engrave_pwm <= optimat_o_laser_engraver_pwm 
 
 
 
@@ -363,8 +363,7 @@ net tool-change-spindle-9-down      optimat_o_spindle_9                       =>
 net tool-change-spindle-10-down     optimat_o_spindle_10                      => motion.digital-out-18
 net tool-change-spindle-11-down     optimat_o_spindle_11                      => motion.digital-out-19
 net tool-change-laser-crosshair     optimat_o_laser_crosshair                 => motion.digital-out-20
-# out 21 connected in the laser engraver safe section
-# net tool-change-laser-engraver      optimat_o_laser_engraver_pwm              => motion.digital-out-21 # this should go into and and that compares it with halui.axis.z.pos-relative
+net tool-change-laser-engraver      optimat_o_laser_engraver_pwm              => motion.digital-out-21 # this should go into and and that compares it with halui.axis.z.pos-relative
 net tool-change-horiz-y-1           optimat_o_horizontal_y_spindle_1_down     => motion.digital-out-22
 net tool-change-horiz-x-1           optimat_o_horizontal_x_spindle_1_down     => motion.digital-out-23
 net tool-change-horiz-x-2           optimat_o_horizontal_x_spindle_2_down     => motion.digital-out-24
