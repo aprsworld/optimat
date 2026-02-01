@@ -29,12 +29,12 @@ O05 ELSEIF [#<tool_in_spindle> EQ 7]
 O05 ELSEIF [#<tool_in_spindle> EQ 8]
 	; turn off laser engraver
 	M65 P21
-	; laser engraver is mounted on groove saw
 	; units up
 	M64 P6
 	; retract groove saw spindle
-	M65 P8
+	M65 P32
 	; give it 2 seconds to do its thing
+	; TODO use prox switches on laser slide to verify that it made it up
 	G4 P2.0
 
 O05 ELSE 
@@ -213,7 +213,7 @@ O10 IF [#<selected_tool> LE 6]
 O10 ELSEIF [#<selected_tool> EQ 7]
 	M64 P20 ; turn on laser crosshair
 O10 ELSEIF [#<selected_tool> EQ 8]
-	M64 P8 ; extend the grooving saw spindle the laser engraver is mounted on
+	M64 P32 ; extend the laser engraver slide
 	; the laser engraver itself is turned on with a M64 P21
 	; the laser engraver itself is turned off with a M65 P21
 O10 ELSEIF [#<selected_tool> GE 16]

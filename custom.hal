@@ -53,8 +53,8 @@ alias pin hm2_5i25.0.7i76.0.3.output-15 optimat_o_laser_engraver_pwm
 alias pin hm2_5i25.0.7i66.0.2.output-00 optimat_o_spindle_9
 alias pin hm2_5i25.0.7i66.0.2.output-01 optimat_o_spindle_10 # sticky
 alias pin hm2_5i25.0.7i66.0.2.output-02 optimat_o_spindle_11 # connected to solenoid, but pneumatic tube is capped?
-# alias pin hm2_5i25.0.7i66.0.2.output-03 optimat_o_ # available output
-# alias pin hm2_5i25.0.7i66.0.2.output-04 optimat_o_ # available output
+alias pin hm2_5i25.0.7i66.0.2.output-03 optimat_o_laser_down # laser down solenoid. Added 2026-02-01
+alias pin hm2_5i25.0.7i66.0.2.output-04 optimat_o_laser_assist # M110 (on) / M111 (off) 
 # alias pin hm2_5i25.0.7i66.0.2.output-05 optimat_o_ # available output
 # alias pin hm2_5i25.0.7i66.0.2.output-06 optimat_o_ # available output
 alias pin hm2_5i25.0.7i66.0.2.output-07 optimat_o_router_1_clamping
@@ -206,31 +206,34 @@ net cb_trip <= optimat_i_motor_cb
 
 
 # inhibit laser engraver when at unsafe height (relative) 
-addf comp.0 servo-thread
-setp comp.0.in1  0.375          # okay to have engraver on below this (relative) z height
-setp comp.0.hyst 0.005          # hysteresis
-net engraver-height-current     comp.0.in0        <= halui.axis.z.pos-relative
+#addf comp.0 servo-thread
+# setp comp.0.in1  0.375          # okay to have engraver on below this (relative) z height
+# setp comp.0.hyst 0.005          # hysteresis
+# net engraver-height-current     comp.0.in0        <= halui.axis.z.pos-relative
 
 # engraver tool (T8) must be the active tool and height must be safe
-addf conv-u32-float.0 servo-thread
-net tool_number_u32   <= halui.tool.number => conv-u32-float.0.in
-net tool_number_float <= conv-u32-float.0.out 
+# addf conv-u32-float.0 servo-thread
+# net tool_number_u32   <= halui.tool.number => conv-u32-float.0.in
+# net tool_number_float <= conv-u32-float.0.out 
 
-addf comp.1 servo-thread
-setp comp.1.in0  8             # engraver tool number
-setp comp.1.hyst 0.0001        # floating point is never equal
-net  tool_number_float => comp.1.in1
+# addf comp.1 servo-thread
+# setp comp.1.in0  8             # engraver tool number
+# setp comp.1.hyst 0.0001        # floating point is never equal
+# net  tool_number_float => comp.1.in1
 
-addf and2.3 servo-thread
-net engrave-safe-height <= comp.0.out => and2.3.in0
-net engrave-safe-selected <= motion.digital-out-21 => and2.3.in1
-net engrave-signal <= and2.3.out
+# addf and2.3 servo-thread
+# net engrave-safe-height <= comp.0.out => and2.3.in0
+# net engrave-safe-selected <= motion.digital-out-21 => and2.3.in1
+# net engrave-signal <= and2.3.out
 
 # make sure comp.1.equal and engrave_signal are both true, if so we turn on optimat_o_laser_engraver_pwm
-addf and2.4 servo-thread
-net engrave-signal => and2.4.in0
-net engrave-tool-match => comp.1.equal => and2.4.in1
-net engrave_pwm <= optimat_o_laser_engraver_pwm <= and2.4.out
+# addf and2.4 servo-thread
+# net engrave-signal => and2.4.in0
+# net engrave-tool-match => comp.1.equal => and2.4.in1
+# net engrave_pwm <= optimat_o_laser_engraver_pwm <= and2.4.out
+
+# disable safe
+net engrave_pwm <= optimat_o_laser_engraver_pwm 
 
 
 
@@ -372,6 +375,7 @@ net tool-change-motor-keb-param-2   optimat_o_keb_parameter_set_2             =>
 net tool-change-motor-keb-param-4   optimat_o_keb_parameter_set_4             => motion.digital-out-29
 net lube-forced-on                  optimat_o_forced_lubrication_on           => motion.digital-out-30 # meter spring pushed grease for 10 seconds
 net lube-air-on                     optimat_o_forced_lubrication_air          => motion.digital-out-31 # blows what is in the tube
+net tool-change-laser-down          optimat_o_laser_down                      => motion.digital-out-32
 
 
 
