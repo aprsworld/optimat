@@ -29,6 +29,8 @@ O05 ELSEIF [#<tool_in_spindle> EQ 7]
 O05 ELSEIF [#<tool_in_spindle> EQ 8]
 	; turn off laser engraver
 	M65 P21
+	; turn off the assist gas
+	M111
 	; units up
 	M64 P6
 	; retract groove saw spindle
@@ -214,6 +216,7 @@ O10 ELSEIF [#<selected_tool> EQ 7]
 	M64 P20 ; turn on laser crosshair
 O10 ELSEIF [#<selected_tool> EQ 8]
 	M64 P32 ; extend the laser engraver slide
+	M110 ; turn on assist gas
 	; the laser engraver itself is turned on with a M64 P21
 	; the laser engraver itself is turned off with a M65 P21
 O10 ELSEIF [#<selected_tool> GE 16]
