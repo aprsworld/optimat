@@ -293,7 +293,7 @@ net spindle-cw spindle.0.forward => optimat_o_keb_rotation_forward
 net spindle-ccw spindle.0.reverse => optimat_o_keb_rotation_reverse
 
 # this should inhibit feed moves until the spindle has reached speed
-net spindle-at-speed <= optimat_i_router_nominal_speed
+# net spindle-at-speed <= optimat_i_router_nominal_speed
 
 
 
@@ -363,7 +363,7 @@ net tool-change-spindle-9-down      optimat_o_spindle_9                       =>
 net tool-change-spindle-10-down     optimat_o_spindle_10                      => motion.digital-out-18
 net tool-change-spindle-11-down     optimat_o_spindle_11                      => motion.digital-out-19
 net tool-change-laser-crosshair     optimat_o_laser_crosshair                 => motion.digital-out-20
-net tool-change-laser-engraver      optimat_o_laser_engraver_pwm              => motion.digital-out-21 # this should go into and and that compares it with halui.axis.z.pos-relative
+# net tool-change-laser-engraver      optimat_o_laser_engraver_pwm              => motion.digital-out-21 # this should go into and and that compares it with halui.axis.z.pos-relative
 net tool-change-horiz-y-1           optimat_o_horizontal_y_spindle_1_down     => motion.digital-out-22
 net tool-change-horiz-x-1           optimat_o_horizontal_x_spindle_1_down     => motion.digital-out-23
 net tool-change-horiz-x-2           optimat_o_horizontal_x_spindle_2_down     => motion.digital-out-24
@@ -471,4 +471,42 @@ net encoder-counts => axis.a.jog-counts
 # Set the spindle's top speed in RPM
 # setp pwmgen.0.scale 100
 
+# laser engraver
+# software PWM
+loadrt pwmgen output_type=0
+addf pwmgen.update      servo-thread
+addf pwmgen.make-pulses servo-thread # should be base-thread
+setp pwmgen.0.enable TRUE
+setp pwmgen.0.scale 65535
 
+# based on https://forum.linuxcnc.org/47-hal-examples/54073-laser-power-scaling-based-on-speed-and-direction
+loadrt lincurve personality=2
+loadrt aprs_laserreg # for some reason the component gets renamed to aprs-laserreg (ie changes _ to -)
+
+addf lincurve.0         servo-thread
+addf aprs-laserreg.0    servo-thread
+
+
+# Laser power mapping (0-100 -> 0-65535)
+setp lincurve.0.x-val-00 0
+setp lincurve.0.y-val-00 0
+
+setp lincurve.0.x-val-01 100 
+setp lincurve.0.y-val-01 65535 
+
+net laser-requested-speed      motion.requested-vel    => aprs-laserreg.0.reqspd
+net laser-current-speed        motion.current-vel      => aprs-laserreg.0.curspd
+net laser-velx                 joint.0.vel-cmd         => aprs-laserreg.0.velx
+net laser-vely                 joint.1.vel-cmd         => aprs-laserreg.0.vely
+setp aprs-laserreg.0.share     1.0 
+
+net laser-percent              spindle.1.speed-out      => aprs-laserreg.0.inpower
+net laser-regulated-percent    aprs-laserreg.0.outpower => lincurve.0.in
+net laser-65535                lincurve.0.out           => pwmgen.0.value
+net laser-pwm                  pwmgen.0.pwm             => optimat_o_laser_engraver_pwm
+
+# second spindle we will always consider to be at speed
+net laser-at-speed => spindle.1.at-speed
+sets laser-at-speed true
+# better set the spindle at speed now for debugging
+sets spindle-at-speed true

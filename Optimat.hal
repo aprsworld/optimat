@@ -309,7 +309,7 @@ net spindle-index-enable      <=>  spindle.0.index-enable
 
 # ---Setup spindle at speed signals---
 
-sets spindle-at-speed true
+#JJ we should be using the hardware sets spindle-at-speed true
 
 
 #******************************
