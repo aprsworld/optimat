@@ -1,0 +1,34 @@
+component aprs_laserreg "";
+
+pin in   float inpower    "Desired laser power at constant speed";
+pin in   float reqspd    "Requested speed, connect to motion.requested-vel";
+pin in   float curspd    "Current speed, connect to motion.current-vel";
+pin in   float velx    "Current speed x component, connect to joint.0.vel-cmd";
+pin in   float vely    "Current speed y component, connect to joint.1.vel-cmd";
+pin in   float velz    "Current speed y component, connect to joint.1.vel-cmd";
+pin in   float share    "Fraction of power given to pure Y movement, eg. 0.6";
+pin out  float outpower "Scaled output laser power";
+
+function _ fp "Update the laser power";
+
+license "GPL";
+
+;;
+
+#include <math.h>
+
+FUNCTION(_) {
+	outpower = inpower * (curspd / reqspd);
+	    
+	float angle = atan2(fabs(velx), fabs(vely));  // angle away from y in radians
+	float horz = angle / (0.5*M_PI);          // 1 when moving perfectly along x axis
+	outpower *= share + (1-share) * horz;
+
+	if ( outpower > inpower )
+		outpower = inpower;        
+	if ( outpower > 100 )
+		outpower = 100;        
+	if ( ( fabs(velx)<1e-6 && fabs(vely)<1e-6 ) || isnan(outpower) || outpower < 0 )
+		outpower = 0;
+
+}

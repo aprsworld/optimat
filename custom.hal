@@ -498,6 +498,7 @@ net laser-requested-speed      motion.requested-vel    => aprs-laserreg.0.reqspd
 net laser-current-speed        motion.current-vel      => aprs-laserreg.0.curspd
 net laser-velx                 joint.0.vel-cmd         => aprs-laserreg.0.velx
 net laser-vely                 joint.1.vel-cmd         => aprs-laserreg.0.vely
+net laser-velz                 joint.2.vel-cmd         => aprs-laserreg.0.velz
 setp aprs-laserreg.0.share     1.0 
 
 net laser-percent              spindle.1.speed-out      => aprs-laserreg.0.inpower
@@ -508,5 +509,5 @@ net laser-pwm                  pwmgen.0.pwm             => optimat_o_laser_engra
 # second spindle we will always consider to be at speed
 net laser-at-speed => spindle.1.at-speed
 sets laser-at-speed true
-# better set the spindle at speed now for debugging
+# better set the main spindle at speed now for debugging
 sets spindle-at-speed true
