@@ -127,8 +127,8 @@ alias pin hm2_5i25.0.7i76.0.3.input-12 optimat_i_tool_magazine_position_bit_4
 # alias pin hm2_5i25.0.7i76.0.3.input-13 # unused
 # alias pin hm2_5i25.0.7i76.0.3.input-14 # unused
 # alias pin hm2_5i25.0.7i76.0.3.input-15 # unused
-# alias pin hm2_5i25.0.7i76.0.3.input-16 # unused (can be encoder in MODE 2)
-# alias pin hm2_5i25.0.7i76.0.3.input-17 # unused (can be encoder in MODE 2)
+alias pin hm2_5i25.0.7i76.0.3.input-16 optimat_i_toolsetter # TS-27R tool length setter
+alias pin hm2_5i25.0.7i76.0.3.input-17 optimat_i_probe      # 3D spindle probe 
 # alias pin hm2_5i25.0.7i76.0.3.input-18 # unused (can be encoder in MODE 2)
 # alias pin hm2_5i25.0.7i76.0.3.input-19 # unused (can be encoder in MODE 2)
 # alias pin hm2_5i25.0.7i76.0.3.input-20 # unused
