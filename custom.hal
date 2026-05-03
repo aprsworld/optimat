@@ -511,3 +511,6 @@ net laser-at-speed => spindle.1.at-speed
 sets laser-at-speed true
 # better set the main spindle at speed now for debugging
 sets spindle-at-speed true
+
+# probing
+net probe_in <= optimat_i_probe
